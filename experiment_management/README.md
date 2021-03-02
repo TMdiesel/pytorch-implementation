@@ -73,10 +73,15 @@ poetry run mlflow run  . --no-conda
 - dataclassesの中でネストする方法がわからなかったので、1重のconfig.yaml, dataclassを与える
 
 ## todo
-- [x] config作成
-- [x] mlflow tracking使う
-- [ ] loggingでoutput作成
-- [ ] 環境変数指定
+- rough
+  - [x] config作成
+  - [x] mlflow tracking使う
+  - [x] loggingでoutput作成
+- detail
+  - [x] config作成
+  - [ ] mlflow tracking使う
+  - [ ] loggingでoutput作成
+  - [ ] 環境変数指定
 
 ## 参考
 - [Python: MLflow Projects を使ってみる](https://blog.amedama.jp/entry/mlflow-projects)

@@ -5,6 +5,8 @@ import os
 import sys
 import dataclasses as dc
 import typing as t
+import logging
+import pathlib
 
 # third party package
 import torch 
@@ -12,15 +14,21 @@ from torch.nn import functional as F
 import pytorch_lightning as pl
 from torch.utils.tensorboard import SummaryWriter
 import mlflow
+import mlflow.pytorch
 import yaml
 
 # my package
 import src.dataset.dataset01.image_datamodule as image_datamodule
 import src.dataset.dataset01.generate_pathlist as generate_pathlist
 import src.model.model01.image_network as image_network
+import src.utils.utils as ut
 
 # global paramter 
 PROJECT_DIR=os.environ.get("PROJECT_DIR","..")
+
+# logger
+logger=logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class LitClassifier(pl.LightningModule):
@@ -81,15 +89,15 @@ class LitClassifier(pl.LightningModule):
 
 
 def main(config):
-    pl.seed_everything(1234)
+    pl.seed_everything(config.seed)
     gpus = [0] if torch.cuda.is_available() else None
 
     filepath_list_train,label_list_train=generate_pathlist.make_datapath_list(
-        f"{PROJECT_DIR}/pytorch_classification/_data/train_image",
-        f"{PROJECT_DIR}/pytorch_classification/_data/train_label/label.pkl")
+        config.project_dir+config.train_dir,
+        config.project_dir+config.train_label_path)
     filepath_list_test,label_list_test=generate_pathlist.make_datapath_list(
-        f"{PROJECT_DIR}/pytorch_classification/_data/test_image",
-        f"{PROJECT_DIR}/pytorch_classification/_data/test_label/label.pkl")
+        config.project_dir+config.test_dir,
+        config.project_dir+config.test_label_path)
     dm = image_datamodule.ImageDataModule(
         filepath_list_train=filepath_list_train,
         filepath_list_test=filepath_list_test,
@@ -100,7 +108,7 @@ def main(config):
     net=image_network.CNN()
     model = LitClassifier(
         model=net,
-        learning_rate=1e-3,
+        learning_rate=config.learning_rate,
         )
 
     tb_logger = pl.loggers.TensorBoardLogger(f"{PROJECT_DIR}/experiment_management/logs",name="lightning_logs")
@@ -117,7 +125,7 @@ def main(config):
     result = trainer.test(model, datamodule=dm)
     pprint(result)
 
-    mlflow.log_param("max_epochs",config.max_epochs)
+    mlflow.pytorch.autolog()
 
 
 @dc.dataclass
@@ -125,6 +133,20 @@ class Config:
     """設定値"""
     # trainer
     max_epochs:int=2
+    seed:int=1234
+    learning_rate:int=1e-3
+
+    # data
+    project_dir:str="path/to/project"
+    train_dir:str="path/to/train"
+    train_label_path:str="path/to/train"
+    test_dir:str="path/to/test"
+    test_label_path:str="path/to/test"
+
+    # logging
+    log_dir:str="./logs/logging_/model/model01"
+    log_normal:str="log.log"
+    log_error:str="error.log"
 
 
 if __name__ == '__main__':
@@ -134,6 +156,14 @@ if __name__ == '__main__':
     with open(args.config_path) as f:
         config=yaml.load(f,Loader=yaml.SafeLoader)
     config=Config(**config)
+
+    ut.init_root_logger(
+        pathlib.Path(config.log_dir),
+        config.log_normal,
+        config.log_error,
+        )
+
+    logger.error("testerror")
 
     main(config)
 
