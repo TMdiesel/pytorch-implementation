@@ -1,0 +1,7 @@
+name: example
+
+entry_points:
+  fetch:
+    command: "wget -P data https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+  preprocess:
+    command: "python3 -m example.preprocess"
