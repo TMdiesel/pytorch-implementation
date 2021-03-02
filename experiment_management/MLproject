@@ -1,7 +1,5 @@
-name: example
+name: mnist_clf
 
 entry_points:
-  fetch:
-    command: "wget -P data https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
-  preprocess:
-    command: "python3 -m src.preprocess"
+  main:
+    command: "env PYTHONPATH=$(pwd) python src/model/model01/image_classifier_models.py --config_path config/model/model01/config01.yml"

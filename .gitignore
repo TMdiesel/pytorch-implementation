@@ -141,7 +141,16 @@ version*/
 Untitled.ipynb
 
 #log
-logs/
+logs/*
+mlruns
+logging_/*
+!.gitkeep
 
 #data
-_data/
+_data/*
+*.csv
+*.pickle
+
+# for check
+check.sh
+check.py

@@ -3,14 +3,17 @@ from argparse import ArgumentParser
 from pprint import pprint
 import os
 import sys
+import dataclasses as dc
+import typing as t
 
 # third party package
 import torch 
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from torch.utils.tensorboard import SummaryWriter
+import mlflow
+import yaml
 
-print(sys.path)
 # my package
 import src.dataset.dataset01.image_datamodule as image_datamodule
 import src.dataset.dataset01.generate_pathlist as generate_pathlist
@@ -77,7 +80,7 @@ class LitClassifier(pl.LightningModule):
         self.logger.experiment.add_scalar("loss(epoch)/train",avg_loss,self.current_epoch)
 
 
-def main():
+def main(config):
     pl.seed_everything(1234)
     gpus = [0] if torch.cuda.is_available() else None
 
@@ -105,7 +108,7 @@ def main():
     tb_logger.experiment.add_graph(net,sampleImg)
 
     trainer = pl.Trainer(
-        max_epochs=1,
+        max_epochs=config.max_epochs,
         logger=tb_logger,
         gpus=gpus,
         resume_from_checkpoint=None,
@@ -114,9 +117,25 @@ def main():
     result = trainer.test(model, datamodule=dm)
     pprint(result)
 
+    mlflow.log_param("max_epochs",config.max_epochs)
+
+
+@dc.dataclass
+class Config:
+    """設定値"""
+    # trainer
+    max_epochs:int=2
+
 
 if __name__ == '__main__':
-    main()
+    parser = ArgumentParser()
+    parser.add_argument('--config_path')
+    args=parser.parse_args()
+    with open(args.config_path) as f:
+        config=yaml.load(f,Loader=yaml.SafeLoader)
+    config=Config(**config)
+
+    main(config)
 
 
 
