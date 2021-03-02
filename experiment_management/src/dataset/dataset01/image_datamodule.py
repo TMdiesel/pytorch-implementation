@@ -12,13 +12,13 @@ from torch.utils.data import DataLoader, random_split
 import pytorch_lightning as pl
 
 # my package
-import image_dataset
+import src.dataset.dataset01.image_dataset as image_dataset
 
 
 class ImageDataModule(pl.LightningDataModule):
     def __init__(
         self,
-        val_split:int=5000,
+        val_split:int=1000,
         num_workers:int=4,
         seed:int=1234,
         batch_size:int=32,

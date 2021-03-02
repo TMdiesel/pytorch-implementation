@@ -139,3 +139,9 @@ version*/
 
 # notebook
 Untitled.ipynb
+
+#log
+logs/
+
+#data
+_data/

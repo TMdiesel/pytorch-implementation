@@ -2,6 +2,7 @@
 from argparse import ArgumentParser
 from pprint import pprint
 import os
+import sys
 
 # third party package
 import torch 
@@ -9,10 +10,11 @@ from torch.nn import functional as F
 import pytorch_lightning as pl
 from torch.utils.tensorboard import SummaryWriter
 
+print(sys.path)
 # my package
-import image_datamodule
-import generate_pathlist
-import image_network
+import src.dataset.dataset01.image_datamodule as image_datamodule
+import src.dataset.dataset01.generate_pathlist as generate_pathlist
+import src.model.model01.image_network as image_network
 
 # global paramter 
 PROJECT_DIR=os.environ.get("PROJECT_DIR","..")
@@ -98,7 +100,7 @@ def main():
         learning_rate=1e-3,
         )
 
-    tb_logger = pl.loggers.TensorBoardLogger(f"{PROJECT_DIR}/experiment_management",name="lightning_logs")
+    tb_logger = pl.loggers.TensorBoardLogger(f"{PROJECT_DIR}/experiment_management/logs",name="lightning_logs")
     sampleImg=torch.rand((1,1,28,28))
     tb_logger.experiment.add_graph(net,sampleImg)
 
