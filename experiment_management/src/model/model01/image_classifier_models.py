@@ -13,9 +13,10 @@ import torch
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from torch.utils.tensorboard import SummaryWriter
+import yaml
 import mlflow
 import mlflow.pytorch
-import yaml
+from pytorch_lightning.loggers import MLFlowLogger
 
 # my package
 import src.dataset.dataset01.image_datamodule as image_datamodule
@@ -49,9 +50,10 @@ class LitClassifier(pl.LightningModule):
         accuracy=self.accuracy(y_hat,y)
         self.log('loss/train', loss)
         self.log('acc/train_acc', accuracy)
-        #to plot train and val in the same figure
-        self.logger.experiment.add_scalars("loss(_same_figure)",
-                                         {"train_loss": loss},self.global_step) 
+        self.logger.log_metrics({"train_loss":1},self.global_step)
+        ##to plot train and val in the same figure
+        #self.logger.experiment.add_scalars("loss(_same_figure)",
+        #                                 {"train_loss": loss},self.global_step) 
         return loss
 
     def validation_step(self,batch,batch_idx):
@@ -61,9 +63,9 @@ class LitClassifier(pl.LightningModule):
         accuracy=self.accuracy(y_hat,y)
         self.log('loss/val',loss)
         self.log('acc/val_acc', accuracy)
-        #to plot train and val in the same figure
-        self.logger.experiment.add_scalars("loss(_same_figure)",
-                                         {"val_loss": loss},self.global_step) 
+        ##to plot train and val in the same figure
+        #self.logger.experiment.add_scalars("loss(_same_figure)",
+        #                                 {"val_loss": loss},self.global_step) 
 
     def test_step(self,batch,batch_idx):
         x,y=batch
@@ -85,7 +87,7 @@ class LitClassifier(pl.LightningModule):
 
     def training_epoch_end(self,outputs):
         avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
-        self.logger.experiment.add_scalar("loss(epoch)/train",avg_loss,self.current_epoch)
+        #self.logger.experiment.add_scalar("loss(epoch)/train",avg_loss,self.current_epoch)
 
 
 def main(config):
@@ -111,21 +113,23 @@ def main(config):
         learning_rate=config.learning_rate,
         )
 
-    tb_logger = pl.loggers.TensorBoardLogger(f"{PROJECT_DIR}/experiment_management/logs",name="lightning_logs")
-    sampleImg=torch.rand((1,1,28,28))
-    tb_logger.experiment.add_graph(net,sampleImg)
+    #tb_logger = pl.loggers.TensorBoardLogger(f"{PROJECT_DIR}/experiment_management/logs",name="lightning_logs")
+    #sampleImg=torch.rand((1,1,28,28))
+    #tb_logger.experiment.add_graph(net,sampleImg)
+    mlf_logger = MLFlowLogger(
+        experiment_name=config.experiment_name,
+        tracking_uri=config.tracking_uri
+        )
 
     trainer = pl.Trainer(
         max_epochs=config.max_epochs,
-        logger=tb_logger,
+        logger=mlf_logger,
         gpus=gpus,
         resume_from_checkpoint=None,
         )
     trainer.fit(model, datamodule=dm)
     result = trainer.test(model, datamodule=dm)
     pprint(result)
-
-    mlflow.pytorch.autolog()
 
 
 @dc.dataclass
@@ -147,6 +151,10 @@ class Config:
     log_dir:str="./logs/logging_/model/model01"
     log_normal:str="log.log"
     log_error:str="error.log"
+
+    # mlflow
+    experiment_name: str="experiment"
+    tracking_uri: str="logs/mlruns"
 
 
 if __name__ == '__main__':

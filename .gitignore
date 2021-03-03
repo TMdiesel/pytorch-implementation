@@ -150,6 +150,7 @@ logging_/*
 _data/*
 *.csv
 *.pickle
+*.ckpt
 
 # for check
 check.sh

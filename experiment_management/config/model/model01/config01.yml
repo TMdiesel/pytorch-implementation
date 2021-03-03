@@ -1,5 +1,5 @@
 # trainer
-max_epochs: 1
+max_epochs: 3
 seed: 1234
 learning_rate: 0.001
 
@@ -14,3 +14,7 @@ test_label_path: pytorch_classification/_data/test_label/label.pkl
 log_dir: ./logs/logging_/model/model01
 log_normal: log.log
 log_error: error.log
+
+# mlflow
+experiment_name: experiment1
+tracking_uri: logs/mlruns

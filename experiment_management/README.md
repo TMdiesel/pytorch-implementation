@@ -71,6 +71,10 @@ poetry run mlflow run  . --no-conda
 - `poetry run mlflow ui`
 - mlrunsの場所変更がわからないので、作業ディレクトリに置いておく
 - dataclassesの中でネストする方法がわからなかったので、1重のconfig.yaml, dataclassを与える
+- MLprojectで実行しても、コード中にmlflowloggerの設定をしていると2つ結果が保存される
+  - MLprojectで実行したほうがpytorchと連携した結果が保存されていない
+  - lightning logsの一部が作業ディレクトリに保存されるようになってしまった
+  - pl.LightningModuleを継承したクラスの__init__で定義されるハイパラは自動的に保存されるっぽい
 
 ## todo
 - rough
@@ -80,7 +84,12 @@ poetry run mlflow run  . --no-conda
 - detail
   - [x] config作成
   - [ ] mlflow tracking使う
-  - [ ] loggingでoutput作成
+    - https://pytorch-lightning.readthedocs.io/en/stable/_modules/pytorch_lightning/loggers/mlflow.htmlが参考になる
+    - 学習曲線
+    - source
+    - 学習時間
+    - lightning logsの保存場所変更
+  - [x] loggingでoutput作成
   - [ ] 環境変数指定
 
 ## 参考
@@ -89,3 +98,4 @@ poetry run mlflow run  . --no-conda
 - [MLflow Projects documentation](https://www.mlflow.org/docs/latest/projects.html)
 - [mlflowを使ってデータ分析サイクルの効率化する方法を考える](https://qiita.com/masa26hiro/items/574c48d523ed76e76a3b)
 - [オレオレKaggle実験管理](https://zenn.dev/fkubota/articles/f7efe69fd2044d)
+- [Pytorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.loggers.mlflow.html)
