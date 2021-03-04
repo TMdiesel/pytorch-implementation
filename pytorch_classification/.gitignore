@@ -130,3 +130,6 @@ dmypy.json
 
 # data
 *.pkl
+
+#notebook
+check.ipynb

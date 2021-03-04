@@ -1,5 +1,7 @@
 import pathlib
 import logging
+from contextlib import contextmanager
+import time
 
 
 def init_root_logger(
@@ -26,3 +28,11 @@ def _add_handler(
     fh_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(name)s - %(funcName)s - %(message)s')
     fh.setFormatter(fh_formatter)
     return fh
+
+
+@contextmanager
+def timer(name):
+    t0 = time.time()
+    print(f'[{name}] start')
+    yield
+    print(f'[{name}] done in {time.time() - t0:.0f} s')

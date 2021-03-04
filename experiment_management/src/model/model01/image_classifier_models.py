@@ -48,12 +48,8 @@ class LitClassifier(pl.LightningModule):
         y_hat=self(x)
         loss=F.cross_entropy(y_hat,y)
         accuracy=self.accuracy(y_hat,y)
-        self.log('loss/train', loss)
-        self.log('acc/train_acc', accuracy)
-        self.logger.log_metrics({"train_loss":1},self.global_step)
-        ##to plot train and val in the same figure
-        #self.logger.experiment.add_scalars("loss(_same_figure)",
-        #                                 {"train_loss": loss},self.global_step) 
+        self.logger.log_metrics({"train_acc":accuracy.item()},self.global_step)
+        self.logger.log_metrics({"train_loss":loss.item()},self.global_step)
         return loss
 
     def validation_step(self,batch,batch_idx):
@@ -61,19 +57,16 @@ class LitClassifier(pl.LightningModule):
         y_hat=self(x)
         loss=F.cross_entropy(y_hat,y)
         accuracy=self.accuracy(y_hat,y)
-        self.log('loss/val',loss)
-        self.log('acc/val_acc', accuracy)
-        ##to plot train and val in the same figure
-        #self.logger.experiment.add_scalars("loss(_same_figure)",
-        #                                 {"val_loss": loss},self.global_step) 
+        self.logger.log_metrics({"val_acc":accuracy.item()},self.global_step)
+        self.logger.log_metrics({"val_loss":loss.item()},self.global_step)
 
     def test_step(self,batch,batch_idx):
         x,y=batch
         y_hat=self(x)
         loss=F.cross_entropy(y_hat,y)
         accuracy=self.accuracy(y_hat,y)
-        self.log('loss/test_loss',loss)
-        self.log('acc/test_acc', accuracy)
+        self.log('test_loss',loss)
+        self.log('test_acc', accuracy)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(),lr=self.hparams.learning_rate)
@@ -84,10 +77,6 @@ class LitClassifier(pl.LightningModule):
         parser.add_argument('--hidden_dim', type=int, default=128)
         parser.add_argument('--learning_rate', type=float, default=0.0001)
         return parser
-
-    def training_epoch_end(self,outputs):
-        avg_loss = torch.stack([x['loss'] for x in outputs]).mean()
-        #self.logger.experiment.add_scalar("loss(epoch)/train",avg_loss,self.current_epoch)
 
 
 def main(config):
@@ -113,12 +102,14 @@ def main(config):
         learning_rate=config.learning_rate,
         )
 
-    #tb_logger = pl.loggers.TensorBoardLogger(f"{PROJECT_DIR}/experiment_management/logs",name="lightning_logs")
-    #sampleImg=torch.rand((1,1,28,28))
-    #tb_logger.experiment.add_graph(net,sampleImg)
+    mlflow_tags={}
+    mlflow_tags["mlflow.runName"]=config.run_name
+    mlflow_tags["mlflow.user"]=config.user
+    mlflow_tags["mlflow.source.name"]=str(os.path.abspath(__file__)).replace("/",'\\')
     mlf_logger = MLFlowLogger(
         experiment_name=config.experiment_name,
-        tracking_uri=config.tracking_uri
+        tracking_uri=config.tracking_uri,
+        tags=mlflow_tags
         )
 
     trainer = pl.Trainer(
@@ -130,6 +121,11 @@ def main(config):
     trainer.fit(model, datamodule=dm)
     result = trainer.test(model, datamodule=dm)
     pprint(result)
+
+    mlf_logger.experiment.log_artifact(mlf_logger.run_id,
+                                config.log_dir+"/"+config.log_normal)
+    mlf_logger.experiment.log_artifact(mlf_logger.run_id,
+                                config.log_dir+"/"+config.log_error)
 
 
 @dc.dataclass
@@ -155,6 +151,8 @@ class Config:
     # mlflow
     experiment_name: str="experiment"
     tracking_uri: str="logs/mlruns"
+    run_name: str="test"
+    user: str="vscode"
 
 
 if __name__ == '__main__':

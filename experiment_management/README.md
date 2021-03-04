@@ -57,40 +57,17 @@ poetry install
 ```
 
 ## 実験管理手順
+### 用語
+実験、runという単位は、[オレオレKaggle実験管理](https://zenn.dev/fkubota/articles/f7efe69fd2044d)と同様です。
+### 手順
+1番目の実験における`model`の学習を例に取ります。手順は以下のとおりです。
+1. 実験ごとに`model/model1`の下にコードを置く。
+2. `config/model/model1`の下に学習パラメータ設定用の`config1.yml`を置く。同一の実験下でパラメータを変えて複数のrunを行うときは、新たに`config2.yml`...を作る。
+3. `bash scripts/run_python.sh`でスクリプトを実行する。ここで、CONFIG_PATH, PYTHON_SCRIPTは必要に応じて書き換える。
+4. `bash scripts/mlflow_ui.sh`でMLflow UIを立ち上げ、実験結果をまとめて見る。
 
 
 
-```
-poetry run mlflow run  . --no-conda
-```
-
-## メモ
-- Dockerコンテナで実行することもできる。
-- .envファイルの読み込みが上手くいかない… 
-    - `env PYTHONPATH=$(pwd) poetry run python hoge.py` としておく
-- `poetry run mlflow ui`
-- mlrunsの場所変更がわからないので、作業ディレクトリに置いておく
-- dataclassesの中でネストする方法がわからなかったので、1重のconfig.yaml, dataclassを与える
-- MLprojectで実行しても、コード中にmlflowloggerの設定をしていると2つ結果が保存される
-  - MLprojectで実行したほうがpytorchと連携した結果が保存されていない
-  - lightning logsの一部が作業ディレクトリに保存されるようになってしまった
-  - pl.LightningModuleを継承したクラスの__init__で定義されるハイパラは自動的に保存されるっぽい
-
-## todo
-- rough
-  - [x] config作成
-  - [x] mlflow tracking使う
-  - [x] loggingでoutput作成
-- detail
-  - [x] config作成
-  - [ ] mlflow tracking使う
-    - https://pytorch-lightning.readthedocs.io/en/stable/_modules/pytorch_lightning/loggers/mlflow.htmlが参考になる
-    - 学習曲線
-    - source
-    - 学習時間
-    - lightning logsの保存場所変更
-  - [x] loggingでoutput作成
-  - [ ] 環境変数指定
 
 ## 参考
 - [Python: MLflow Projects を使ってみる](https://blog.amedama.jp/entry/mlflow-projects)
@@ -99,3 +76,5 @@ poetry run mlflow run  . --no-conda
 - [mlflowを使ってデータ分析サイクルの効率化する方法を考える](https://qiita.com/masa26hiro/items/574c48d523ed76e76a3b)
 - [オレオレKaggle実験管理](https://zenn.dev/fkubota/articles/f7efe69fd2044d)
 - [Pytorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.loggers.mlflow.html)
+- [MLflow tags](https://github.com/mlflow/mlflow/blob/9fd60eeee77dbda37bae0ff97bc899e2bf87605f/mlflow/utils/mlflow_tags.py#L7)
+- [MLFlowLogger source](https://pytorch-lightning.readthedocs.io/en/stable/_modules/pytorch_lightning/loggers/mlflow.html)

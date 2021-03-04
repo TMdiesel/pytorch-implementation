@@ -154,4 +154,8 @@ _data/*
 
 # for check
 check.sh
+check.ipynb
 check.py
+
+# memo
+memo.md
