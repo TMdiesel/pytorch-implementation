@@ -8,7 +8,10 @@ PyTorchに関連する実装です。
     - PyTorch Lightningを利用したAutoEncoderの実装です。データには信号データであるMITの心電図波形データセットを用います
 - [experiment_management][experiment_management]
     - MLflowを利用した実験管理の手順です。
+- [deep_learning_with_pytorch][deep_learning_with_pytorch]
+  - [Deep Learning with PyTorch](https://pytorch.org/assets/deep-learning/Deep-Learning-with-PyTorch.pdf)の実装です。
 
 [pytorch_classification]:./pytorch_classification
 [pytorch_autoencoder]:./pytorch_autoencoder
 [experiment_management]:./experiment_management
+[deep_learning_with_pytorch]:./deep_learning_with_pytorch

@@ -151,6 +151,8 @@ _data/*
 *.csv
 *.pickle
 *.ckpt
+dlwpt-code/
+deep-learning-with-pytorch-ja/
 
 # for check
 check.sh
