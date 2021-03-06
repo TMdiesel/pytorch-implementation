@@ -153,6 +153,8 @@ _data/*
 *.ckpt
 dlwpt-code/
 deep-learning-with-pytorch-ja/
+*.tar.gz
+deep_learning_with_pytorch/chapter7/data/
 
 # for check
 check.sh
