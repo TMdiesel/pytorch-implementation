@@ -1,9 +1,9 @@
-import random
 import copy
 import csv
 import functools
 import glob
 import os
+import random
 
 from collections import namedtuple
 
@@ -23,34 +23,36 @@ log = logging.getLogger(__name__)
 # log.setLevel(logging.INFO)
 log.setLevel(logging.DEBUG)
 
-raw_cache = getCache('part2ch10_raw')
+raw_cache = getCache('part2ch11_raw')
 
 CandidateInfoTuple = namedtuple(
     'CandidateInfoTuple',
     'isNodule_bool, diameter_mm, series_uid, center_xyz',
 )
 
+DATA_DIR="../luna16/"
+
 @functools.lru_cache(1)
 def getCandidateInfoList(requireOnDisk_bool=True):
     # We construct a set with all series_uids that are present on disk.
     # This will let us use the data, even if we haven't downloaded all of
     # the subsets yet.
-    mhd_list = glob.glob('data-unversioned/part2/luna/subset*/*.mhd')
+    mhd_list = glob.glob(DATA_DIR+'subset*/*.mhd')
     presentOnDisk_set = {os.path.split(p)[-1][:-4] for p in mhd_list}
 
     diameter_dict = {}
-    with open('data/part2/luna/annotations.csv', "r") as f:
+    with open(DATA_DIR+'annotations.csv', "r") as f:
         for row in list(csv.reader(f))[1:]:
             series_uid = row[0]
             annotationCenter_xyz = tuple([float(x) for x in row[1:4]])
             annotationDiameter_mm = float(row[4])
 
             diameter_dict.setdefault(series_uid, []).append(
-                (annotationCenter_xyz, annotationDiameter_mm)
+                (annotationCenter_xyz, annotationDiameter_mm),
             )
 
     candidateInfo_list = []
-    with open('data/part2/luna/candidates.csv', "r") as f:
+    with open(DATA_DIR+'candidates.csv', "r") as f:
         for row in list(csv.reader(f))[1:]:
             series_uid = row[0]
 
@@ -84,7 +86,7 @@ def getCandidateInfoList(requireOnDisk_bool=True):
 class Ct:
     def __init__(self, series_uid):
         mhd_path = glob.glob(
-            'data-unversioned/part2/luna/subset*/{}.mhd'.format(series_uid)
+            DATA_DIR+'subset*/{}.mhd'.format(series_uid)
         )[0]
 
         ct_mhd = sitk.ReadImage(mhd_path)
@@ -137,6 +139,7 @@ class Ct:
         return ct_chunk, center_irc
 
 
+@functools.lru_cache(1, typed=True)
 def getCt(series_uid):
     return Ct(series_uid)
 
@@ -146,11 +149,13 @@ def getCtRawCandidate(series_uid, center_xyz, width_irc):
     ct_chunk, center_irc = ct.getRawCandidate(center_xyz, width_irc)
     return ct_chunk, center_irc
 
+
 class LunaDataset(Dataset):
     def __init__(self,
                  val_stride=0,
                  isValSet_bool=None,
                  series_uid=None,
+                 sortby_str='random',
             ):
         self.candidateInfo_list = copy.copy(getCandidateInfoList())
 
@@ -166,7 +171,15 @@ class LunaDataset(Dataset):
         elif val_stride > 0:
             del self.candidateInfo_list[::val_stride]
             assert self.candidateInfo_list
-        random.shuffle(self.candidateInfo_list)
+
+        if sortby_str == 'random':
+            random.shuffle(self.candidateInfo_list)
+        elif sortby_str == 'series_uid':
+            self.candidateInfo_list.sort(key=lambda x: (x.series_uid, x.center_xyz))
+        elif sortby_str == 'label_and_size':
+            pass
+        else:
+            raise Exception("Unknown sort: " + repr(sortby_str))
 
         log.info("{!r}: {} {} samples".format(
             self,
@@ -186,9 +199,7 @@ class LunaDataset(Dataset):
             candidateInfo_tup.center_xyz,
             width_irc,
         )
-
-        candidate_t = torch.from_numpy(candidate_a)
-        candidate_t = candidate_t.to(torch.float32)
+        candidate_t = torch.from_numpy(candidate_a).to(torch.float32)
         candidate_t = candidate_t.unsqueeze(0)
 
         pos_t = torch.tensor([
@@ -198,9 +209,4 @@ class LunaDataset(Dataset):
             dtype=torch.long,
         )
 
-        return (
-            candidate_t,
-            pos_t,
-            candidateInfo_tup.series_uid,
-            torch.tensor(center_irc),
-        )
+        return candidate_t, pos_t, candidateInfo_tup.series_uid, torch.tensor(center_irc)

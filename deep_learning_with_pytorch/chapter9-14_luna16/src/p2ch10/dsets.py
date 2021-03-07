@@ -14,9 +14,9 @@ import torch
 import torch.cuda
 from torch.utils.data import Dataset
 
-from src.util.disk import getCache
-from src.util.util import XyzTuple, xyz2irc
-from src.util.logconf import logging
+from util.disk import getCache
+from util.util import XyzTuple, xyz2irc
+from util.logconf import logging
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)

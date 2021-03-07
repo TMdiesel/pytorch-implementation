@@ -145,6 +145,7 @@ logs/*
 mlruns
 logging_/*
 !.gitkeep
+runs/
 
 #data
 _data/*
@@ -157,6 +158,7 @@ deep-learning-with-pytorch-ja/
 deep_learning_with_pytorch/chapter7/data/
 luna16/
 cache*
+subset0/
 
 # for check
 check.sh

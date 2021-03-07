@@ -29,6 +29,7 @@ PyYAML = "^5.4.1"
 SimpleITK = "^2.0.2"
 diskcache = "^5.2.1"
 cassandra-driver = "^3.24.0"
+ipyvolume = "^0.5.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
