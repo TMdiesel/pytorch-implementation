@@ -199,6 +199,22 @@ optional = false
 python-versions = "~=3.5"
 
 [[package]]
+name = "cassandra-driver"
+version = "3.24.0"
+description = "DataStax Driver for Apache Cassandra"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+futures = "*"
+geomet = ">=0.1,<0.3"
+six = ">=1.9"
+
+[package.extras]
+graph = ["gremlinpython (==3.4.6)"]
+
+[[package]]
 name = "certifi"
 version = "2020.12.5"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -310,6 +326,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "diskcache"
+version = "5.2.1"
+description = "Disk Cache -- Disk and file backed persistent cache."
+category = "main"
+optional = false
+python-versions = ">=3"
+
+[[package]]
 name = "docker"
 version = "4.2.2"
 description = "A Python library for the Docker Engine API."
@@ -397,6 +421,26 @@ description = "Clean single-source support for Python 3 and 2"
 category = "main"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "futures"
+version = "3.1.1"
+description = "Backport of the concurrent.futures package from Python 3.2"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "geomet"
+version = "0.2.1.post1"
+description = "GeoJSON <-> WKT/WKB conversion utilities"
+category = "main"
+optional = false
+python-versions = ">2.6, !=3.3.*, <4"
+
+[package.dependencies]
+click = "*"
+six = "*"
 
 [[package]]
 name = "gitdb"
@@ -1640,6 +1684,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "simpleitk"
+version = "2.0.2"
+description = "SimpleITK is a simplified interface to the Insight Toolkit (ITK) for image registration and segmentation"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "six"
 version = "1.15.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -1975,7 +2027,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "4f53e62d13741c9c03cfa44615e39d4c0efd98144123fdd44f0e9fdebda18769"
+content-hash = "8e6391945ad212d0bf8b3d6bb6b1d899f0dcb0723f21db4aee3f5e6f87093f88"
 
 [metadata.files]
 absl-py = [
@@ -2081,6 +2133,34 @@ cachetools = [
     {file = "cachetools-4.2.0-py3-none-any.whl", hash = "sha256:c6b07a6ded8c78bf36730b3dc452dfff7d95f2a12a2fed856b1a0cb13ca78c61"},
     {file = "cachetools-4.2.0.tar.gz", hash = "sha256:3796e1de094f0eaca982441c92ce96c68c89cced4cd97721ab297ea4b16db90e"},
 ]
+cassandra-driver = [
+    {file = "cassandra-driver-3.24.0.tar.gz", hash = "sha256:83ec8d9a5827ee44bb1c0601a63696a8a9086beaf0151c8255556299246081bd"},
+    {file = "cassandra_driver-3.24.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:110a89f41b3a7cfe92aef67119464a6af9a86c14fa018ff0bb3b152942331f7c"},
+    {file = "cassandra_driver-3.24.0-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:b48a710eadf6e1ea33489522fdd1fd9f2e23bb4408ee9139205f3f8072ab4e78"},
+    {file = "cassandra_driver-3.24.0-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:7526443f02b85652a8654be466730fab8052883103536cc94085c8593b7162a9"},
+    {file = "cassandra_driver-3.24.0-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:a4a56292ab4bed0bedaf5d3e88aa6c38bc130ef65bed12774a2ab62d01087f3e"},
+    {file = "cassandra_driver-3.24.0-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:a74ee7e047f73ddbab10546d6c6733836096611b88c8b416c9969895f88c512b"},
+    {file = "cassandra_driver-3.24.0-cp35-cp35m-macosx_10_6_intel.whl", hash = "sha256:4e228e3951150e7905fe1363e2dbe61940d8a34df208764452044934d8ce061f"},
+    {file = "cassandra_driver-3.24.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:8024490895f48f78be06bad5ebec1b2d6adb658f5e3d5f67d9b4c8669cf391f2"},
+    {file = "cassandra_driver-3.24.0-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:970900e1d181f99ac6560ada02969c04d24d21bce1419c7daaf154d5c892ab3f"},
+    {file = "cassandra_driver-3.24.0-cp35-cp35m-win32.whl", hash = "sha256:e7d641dca1fdbf239bc3edbeb6bae63eb50382eee50567334dd62aecdd7cf4b4"},
+    {file = "cassandra_driver-3.24.0-cp35-cp35m-win_amd64.whl", hash = "sha256:81a1355b2edd08f81ef1577c9fc51812e12d309f9b0a7ebeddecceb0dc2d0b86"},
+    {file = "cassandra_driver-3.24.0-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:ea1ffe18b40f7323cc57270fc8e4c680c0af39b1d2108b0aa624895d435808e6"},
+    {file = "cassandra_driver-3.24.0-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:3d1287cfa1ebf439646d31808b19d784884d8f717fce2e7728130e9ab8ff9ccd"},
+    {file = "cassandra_driver-3.24.0-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:2ccbfdbf168fbb5e0055f2161790de12c280840881cb3fb7893848af1e4d9c07"},
+    {file = "cassandra_driver-3.24.0-cp36-cp36m-win32.whl", hash = "sha256:59e06084ce3079b1bc69e3de3e22a07a722d984f8b51fc0a98e98112bfbba9b8"},
+    {file = "cassandra_driver-3.24.0-cp36-cp36m-win_amd64.whl", hash = "sha256:def8803132d5ec801333ebaa46edd8c0f28e56fefdb41acf0a1fad9e1c72bfcd"},
+    {file = "cassandra_driver-3.24.0-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:97f7668636a48282d0e65eeb914d04fd1280c2304de004bed1ea4de5c9c42212"},
+    {file = "cassandra_driver-3.24.0-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:590ca23f6ca6996ea454d7531d74ea526c90c6734842f62cd190a7d24c8a1bff"},
+    {file = "cassandra_driver-3.24.0-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:f90699c8f1aa4eb58bf84be0fbff859ba094799b662592d1c20237c7cade702e"},
+    {file = "cassandra_driver-3.24.0-cp37-cp37m-win32.whl", hash = "sha256:f0f95cdbaba88d57a0529eb67b83536279a0ec02f1b51bc27a73c1eb3aaabe07"},
+    {file = "cassandra_driver-3.24.0-cp37-cp37m-win_amd64.whl", hash = "sha256:d1d302abc500a3ddfc1922f9914c843d4c57c87f5480f0b226e8f2806a2281ab"},
+    {file = "cassandra_driver-3.24.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:1e793f4545b53353c3df5daafb44ce2b4479aad1aebb0dd4989490283716aff7"},
+    {file = "cassandra_driver-3.24.0-cp38-cp38-manylinux1_i686.whl", hash = "sha256:64b1386a18940e70462fe564e1e056891ded8c4a812d9dc8ad21a500f959de1d"},
+    {file = "cassandra_driver-3.24.0-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:51d43208dec31f59a4c038b105cc43c9ebb86a9172970079556918208472e77c"},
+    {file = "cassandra_driver-3.24.0-cp38-cp38-win32.whl", hash = "sha256:cf132f0d170ec1afc90780349275e7932f64d603492652f29fd9a4082d5f2ae6"},
+    {file = "cassandra_driver-3.24.0-cp38-cp38-win_amd64.whl", hash = "sha256:c76ff976df5975d4444c330d52ea17324e7f33e35a6366b8a8286e5102bacdd8"},
+]
 certifi = [
     {file = "certifi-2020.12.5-py2.py3-none-any.whl", hash = "sha256:719a74fb9e33b9bd44cc7f3a8d94bc35e4049deebe19ba7d8e108280cfd59830"},
     {file = "certifi-2020.12.5.tar.gz", hash = "sha256:1a4995114262bffbc2413b159f2a1a480c969de6e6eb13ee966d470af86af59c"},
@@ -2172,6 +2252,10 @@ defusedxml = [
     {file = "defusedxml-0.6.0-py2.py3-none-any.whl", hash = "sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93"},
     {file = "defusedxml-0.6.0.tar.gz", hash = "sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"},
 ]
+diskcache = [
+    {file = "diskcache-5.2.1-py3-none-any.whl", hash = "sha256:6e8137c778fd2752b93c8a8f944e939b3665d645b46774d8537dd3528ac3baa1"},
+    {file = "diskcache-5.2.1.tar.gz", hash = "sha256:1805acd5868ac10ad547208951a1190a0ab7bbff4e70f9a07cde4dbdfaa69f64"},
+]
 docker = [
     {file = "docker-4.2.2-py2.py3-none-any.whl", hash = "sha256:03a46400c4080cb6f7aa997f881ddd84fef855499ece219d75fbdb53289c17ab"},
     {file = "docker-4.2.2.tar.gz", hash = "sha256:26eebadce7e298f55b76a88c4f8802476c5eaddbdbe38dbc6cce8781c47c9b54"},
@@ -2194,6 +2278,16 @@ fsspec = [
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
+]
+futures = [
+    {file = "futures-3.1.1-py2-none-any.whl", hash = "sha256:c4884a65654a7c45435063e14ae85280eb1f111d94e542396717ba9828c4337f"},
+    {file = "futures-3.1.1-py3-none-any.whl", hash = "sha256:3a44f286998ae64f0cc083682fcfec16c406134a81a589a5de445d7bb7c2751b"},
+    {file = "futures-3.1.1.tar.gz", hash = "sha256:51ecb45f0add83c806c68e4b06106f90db260585b25ef2abfcda0bd95c0132fd"},
+]
+geomet = [
+    {file = "geomet-0.2.1.post1-py3-none-any.whl", hash = "sha256:a41a1e336b381416d6cbed7f1745c848e91defaa4d4c1bdc1312732e46ffad2b"},
+    {file = "geomet-0.2.1.post1-py3.6.egg", hash = "sha256:87ae0fc42e532b9e98969c0bbf895a5e0b2bb4f6f775cf51a74e6482f1f35c2b"},
+    {file = "geomet-0.2.1.post1.tar.gz", hash = "sha256:91d754f7c298cbfcabd3befdb69c641c27fe75e808b27aa55028605761d17e95"},
 ]
 gitdb = [
     {file = "gitdb-4.0.5-py3-none-any.whl", hash = "sha256:91f36bfb1ab7949b3b40e23736db18231bf7593edada2ba5c3a174a7b23657ac"},
@@ -2394,6 +2488,7 @@ kiwisolver = [
     {file = "kiwisolver-1.3.1.tar.gz", hash = "sha256:950a199911a8d94683a6b10321f9345d5a3a8433ec58b217ace979e18f16e248"},
 ]
 mako = [
+    {file = "Mako-1.1.4-py2.py3-none-any.whl", hash = "sha256:aea166356da44b9b830c8023cd9b557fa856bd8b4035d6de771ca027dfc5cc6e"},
     {file = "Mako-1.1.4.tar.gz", hash = "sha256:17831f0b7087c313c0ffae2bcbbd3c1d5ba9eeac9c38f2eb7b50e8c99fe9d5ab"},
 ]
 markdown = [
@@ -3002,6 +3097,28 @@ seaborn = [
 send2trash = [
     {file = "Send2Trash-1.5.0-py3-none-any.whl", hash = "sha256:f1691922577b6fa12821234aeb57599d887c4900b9ca537948d2dac34aea888b"},
     {file = "Send2Trash-1.5.0.tar.gz", hash = "sha256:60001cc07d707fe247c94f74ca6ac0d3255aabcb930529690897ca2a39db28b2"},
+]
+simpleitk = [
+    {file = "SimpleITK-2.0.2-cp35-cp35m-macosx_10_9_x86_64.whl", hash = "sha256:fa87ed3d73732a4668d8e216aac6e6d547ec92b566681a5d34ca5b7d86c569dc"},
+    {file = "SimpleITK-2.0.2-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:8d795689bc613907196b1dc322e3b6247ec19c8e94cc12704a267d017551cb61"},
+    {file = "SimpleITK-2.0.2-cp35-cp35m-manylinux2010_x86_64.whl", hash = "sha256:46772fa3e6e167de0821b85e122debf90833d84daa23c5c66053cf28437f4573"},
+    {file = "SimpleITK-2.0.2-cp35-cp35m-win_amd64.whl", hash = "sha256:e0be3a611b447fb923ebfaacc3ca1ce42d09aa31882086efdb792329e9ab123b"},
+    {file = "SimpleITK-2.0.2-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:21bb06e640a8540d53b3ee00a8fcdcdf6e1a48aa4cf28172cc08bc153f012b76"},
+    {file = "SimpleITK-2.0.2-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:dc077928ab993170da5eed27f4737c9325a9fe705ff871945d0a6d6f15e24fab"},
+    {file = "SimpleITK-2.0.2-cp36-cp36m-manylinux2010_x86_64.whl", hash = "sha256:13628c2b22679a8b36d209ebc1d0ace53fe4ab6c4e8654eff0bc96ee40f702c8"},
+    {file = "SimpleITK-2.0.2-cp36-cp36m-win_amd64.whl", hash = "sha256:09911709ae2d3e29115dce3e78fa437dd78836812306be0a252c2da120928435"},
+    {file = "SimpleITK-2.0.2-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:cb969855ea1cd14839b10755a9b3cc1528cc912d4d5cc151c04f46fbcbd416c2"},
+    {file = "SimpleITK-2.0.2-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:6522c9e6a24301d0886f5e452724f165e0bd521548a9795b5bdc62031e950d1d"},
+    {file = "SimpleITK-2.0.2-cp37-cp37m-manylinux2010_x86_64.whl", hash = "sha256:ed444d72a6a5f4870077a1ddf376974ac927afe0a2b7c8a34d359b074ac21c2d"},
+    {file = "SimpleITK-2.0.2-cp37-cp37m-win_amd64.whl", hash = "sha256:4728c090a2e95b169ef8edab42f068fcb8657cac1d3d98df805ca468d9c45c38"},
+    {file = "SimpleITK-2.0.2-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:f83fdde9eb91d0b01af73e64e22d65b26dbaf1edf6e6220a2ab21123229e0863"},
+    {file = "SimpleITK-2.0.2-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:73caad7fb842985abc0ccf3c2590fd4e66e2b66e846b2eb17b759ffe4cc0455c"},
+    {file = "SimpleITK-2.0.2-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:666b7b88bc53c07d012181fa5306134d2d837cc59bc99e5c6641954f81c6501a"},
+    {file = "SimpleITK-2.0.2-cp38-cp38-win_amd64.whl", hash = "sha256:fac923ee2c3c09dcee9b2a80c0d2bd886765a0727eba7a3befa3a36a8e17170f"},
+    {file = "SimpleITK-2.0.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:95070b5cd4293586aa788edf79593d1b9600d2c55ffe641920090f58dd69b995"},
+    {file = "SimpleITK-2.0.2-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:5ab5ab167d27bb24e958f02df26b467603197b71e91b13b1635763cf64d2431f"},
+    {file = "SimpleITK-2.0.2-cp39-cp39-manylinux2010_x86_64.whl", hash = "sha256:6efe188b0f375f35734b272fe06863731d9ab08f9f0ff3e4bc342f941cf4ca08"},
+    {file = "SimpleITK-2.0.2-cp39-cp39-win_amd64.whl", hash = "sha256:a49b02bd405a3630be5388c0cafdcee951a8e8a81351fcca9e55b6b1b76f0ff9"},
 ]
 six = [
     {file = "six-1.15.0-py2.py3-none-any.whl", hash = "sha256:8b74bedcbbbaca38ff6d7491d76f2b06b3592611af620f8426e82dddb04a5ced"},

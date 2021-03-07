@@ -155,6 +155,8 @@ dlwpt-code/
 deep-learning-with-pytorch-ja/
 *.tar.gz
 deep_learning_with_pytorch/chapter7/data/
+luna16/
+cache*
 
 # for check
 check.sh

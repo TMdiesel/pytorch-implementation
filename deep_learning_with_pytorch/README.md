@@ -11,7 +11,7 @@
 |6章|ニューラルネットワーク|
 |7章|画像の扱い|
 |8章|畳み込み|
-|||
+|9章～14章|肺がん早期発見プロジェクト<br>*概要はこちらの[README](./chapter9-14_luna16/README.md)をご参照ください|
 
 ## 参考
 - [著者GitHub](https://github.com/deep-learning-with-pytorch/dlwpt-code)
