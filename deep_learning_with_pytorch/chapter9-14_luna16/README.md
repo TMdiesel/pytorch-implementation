@@ -23,6 +23,12 @@
     - ラベル：結節 or not, 陽性 or 陰性
 ### 11章
 - 結節候補を分類
+### 12章
+- 結節候補を分類
+- 不均衡データに対処    
+    - 評価指標をF1スコアにする
+    - バランス調整
+    - augumentation
 
 ## 参考
 - [Deep Learning with PyTorch](https://pytorch.org/assets/deep-learning/Deep-Learning-with-PyTorch.pdf)
