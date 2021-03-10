@@ -159,6 +159,7 @@ deep_learning_with_pytorch/chapter7/data/
 luna16/
 cache*
 subset0/
+gan/data/
 
 # for check
 check.sh
@@ -168,3 +169,7 @@ template.ipynb
 
 # memo
 memo.md
+
+# github
+5_gan_generation/
+6_gan_anomaly_detection/
