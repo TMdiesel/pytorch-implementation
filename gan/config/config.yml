@@ -6,7 +6,7 @@ b1: 0
 b2: 0.9
 
 # trainer
-max_epochs: 2
+max_epochs: 200
 seed: 1234
 
 # data
