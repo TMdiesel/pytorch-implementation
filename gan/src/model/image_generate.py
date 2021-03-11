@@ -10,6 +10,7 @@ import pathlib
 
 # third party package
 import torch 
+import torch.nn as nn
 from torch.nn import functional as F
 import pytorch_lightning as pl
 from torch.utils.tensorboard import SummaryWriter
@@ -42,8 +43,8 @@ class GAN(pl.LightningModule):
         b2=0.9,
         discriminator=dcgan.Discriminator(),
         generator=dcgan.Generator(),
-        device="cuda",
         criterion=None,
+        **kwargs
         ):
 
         super().__init__()
@@ -56,28 +57,28 @@ class GAN(pl.LightningModule):
         self.b2=b2
         self.discriminator=discriminator
         self.generator=generator
-        self.device=device
         self.criterion=criterion
 
     def forward(self,z):
         return self.generator(z)
 
     def training_step(self,batch,batch_idx,optimizer_idx):
-        imgs,_=batch
+        imgs=batch
         # sample noise
-        z=torch.randn(imgs.shape[0],self.z_dim).to(self.device)
+        z=torch.randn(imgs.shape[0],self.z_dim).to(batch.device)
         z=z.view(imgs.shape[0],self.z_dim,1,1)
         # label
-        label_real=torch.ones(imgs.shape[0], 1).to(self.device)
-        label_fake=torch.ones(imgs.shape[0], 0).to(self.device)
+        label_real=torch.full((imgs.shape[0],), 1).float().to(batch.device)
+        label_fake=torch.full((imgs.shape[0],), 0).float().to(batch.device)
+        # fake
+        fake_images=self.generator(z)
+        d_out_fake=self.discriminator(fake_images)
 
         # generator
         if optimizer_idx==0:
-            fake_images=self.generator(z)
-            d_out_fake=self.discriminator(fake_images)
             g_loss=self.criterion(d_out_fake.view(-1),label_real)
 
-            self.logger.log_metrics({"train_gloss":g_loss},self.global_step)
+            #self.logger.log_metrics({"train_gloss":g_loss},self.global_step)
             return g_loss
 
         # discriminator
@@ -87,19 +88,14 @@ class GAN(pl.LightningModule):
             d_loss_fake=self.criterion(d_out_fake.view(-1),label_fake)
             d_loss=d_loss_real+d_loss_fake
 
-            self.logger.log_metrics({"train_dloss":d_loss},self.global_step)
+            #self.logger.log_metrics({"train_dloss":d_loss},self.global_step)
             return d_loss
 
     def validation_step(self,batch,batch_idx):
         pass
 
     def test_step(self,batch,batch_idx):
-        x,y=batch
-        y_hat=self(x)
-        loss=F.cross_entropy(y_hat,y)
-        accuracy=self.accuracy(y_hat,y)
-        self.log('test_loss',loss)
-        self.log('test_acc', accuracy)
+        pass
 
     def configure_optimizers(self):
         opt_g = torch.optim.Adam(self.generator.parameters(), 
@@ -113,25 +109,24 @@ def main(config):
     pl.seed_everything(config.seed)
     gpus = [0] if torch.cuda.is_available() else None
 
-    filepath_list_train,label_list_train=generate_pathlist.make_datapath_list(
+    filepath_list_train=generate_pathlist.make_datapath_list(
         config.project_dir+config.train_dir,
-        config.project_dir+config.train_label_path)
-    filepath_list_test,label_list_test=generate_pathlist.make_datapath_list(
-        config.project_dir+config.test_dir,
-        config.project_dir+config.test_label_path)
+    )
+
     dm = image_datamodule.ImageDataModule(
         filepath_list_train=filepath_list_train,
-        filepath_list_test=filepath_list_test,
-        label_list_train=label_list_train,
-        label_list_test=label_list_test,
+        filepath_list_test=filepath_list_train,
         )
 
-    discriminator=dcgan.Discriminator(),
-    generator=dcgan.Generator(),
+    discriminator=dcgan.Discriminator()
+    generator=dcgan.Generator()
+    criterion=nn.BCEWithLogitsLoss(reduction="mean")
+
     model = GAN(
         discriminator=discriminator,
         generator=generator,
-        learning_rate=config.learning_rate,
+        criterion=criterion,
+        **dc.asdict(config),
         )
 
     mlflow_tags={}
@@ -151,8 +146,6 @@ def main(config):
         resume_from_checkpoint=None,
         )
     trainer.fit(model, datamodule=dm)
-    result = trainer.test(model, datamodule=dm)
-    pprint(result)
 
     mlf_logger.experiment.log_artifact(mlf_logger.run_id,
                                 config.log_dir+"/"+config.log_normal)
@@ -163,17 +156,21 @@ def main(config):
 @dc.dataclass
 class Config:
     """設定値"""
+    # GAN
+    image_size:int=64
+    z_dim:int=20
+    learning_rate:int=1e-4
+    b1:float=0
+    b2:float=0.9
+
     # trainer
     max_epochs:int=2
     seed:int=1234
-    learning_rate:int=1e-3
 
     # data
     project_dir:str="path/to/project"
     train_dir:str="path/to/train"
-    train_label_path:str="path/to/train"
     test_dir:str="path/to/test"
-    test_label_path:str="path/to/test"
 
     # logging
     log_dir:str="./logs/logging_/model/model01"

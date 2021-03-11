@@ -22,15 +22,14 @@ class BaseTransform():
     mean : 各色チャネルの平均値
     std : 各色チャネルの標準偏差
     """
-    def __init__(self, mean:float=None, std:float=None):
+    def __init__(self, mean:float=0.5, std:float=0.5):
         self.base_transform = transforms.Compose([
             transforms.ToTensor(),  
-            #transforms.Normalize(mean, std),
+            transforms.Normalize(mean, std),
         ])
 
-    def __call__(self, array:np.array):
-        array=array/255
-        return torch.tensor(array)
+    def __call__(self, img):
+        return self.base_transform(img)
 
 
 class ImageDataset(data.Dataset):
@@ -41,10 +40,8 @@ class ImageDataset(data.Dataset):
     transform : 前処理クラスのインスタンス
     """
 
-    def __init__(self, filepath_list, label_list, class_num,transform=None):
+    def __init__(self, filepath_list,transform=None):
         self.filepath_list = filepath_list  
-        self.label_list = label_list
-        self.class_num=class_num
         self.transform = transform  
 
     def __len__(self):
@@ -52,13 +49,9 @@ class ImageDataset(data.Dataset):
 
     def __getitem__(self, index):
         '''
-        前処理をした画像のTensor形式のデータとラベルを取得
+        前処理をした画像のTensor形式のデータを取得
         '''
         path = self.filepath_list[index]
-        with open(path,"rb") as f:
-            array=pickle.load(f)
-        transformed = self.transform(array)  
-        
-        label=self.label_list[index]
-        onehot_label=torch.eye(self.class_num)[label]
-        return transformed.float(), torch.tensor(label).long()
+        img=Image.open(path)
+        transformed = self.transform(img)  
+        return transformed
