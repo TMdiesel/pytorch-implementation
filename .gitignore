@@ -160,6 +160,7 @@ luna16/
 cache*
 subset0/
 gan/data/
+gan_based_anomaly_detection/data/
 
 # for check
 check.sh

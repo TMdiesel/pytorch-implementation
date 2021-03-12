@@ -1,0 +1,30 @@
+# GAN
+image_size: 64
+z_dim: 20
+learning_rate: 0.0001
+b1: 0
+b2: 0.9
+
+# trainer
+max_epochs: 100
+
+# seed
+seed: 1234
+
+# data
+project_dir: /workspaces/load_to_goal/GitHub/pytorch-implementation/
+train_dir: gan_based_anomaly_detection/data/img_78
+
+# logging
+log_dir: ./logs/logging_
+log_normal: log.log
+log_error: error.log
+
+# mlflow
+experiment_name: experiment
+tracking_uri: logs/mlruns
+run_name: test
+user: vscode
+
+# checkpoint
+checkpoint_dir: ./logs/lightning/
