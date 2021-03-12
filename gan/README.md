@@ -6,7 +6,7 @@ PyTorch Lightningを利用したMNIST画像生成DCGANの実装です。
 2. ニューラルネットワークを学習させる。  
    実行コマンドは以下のとおりです。`config/config.yml`で各種パラメータを変更することができます。
     ```
-    env PYTHONPATH=$(pwd) poetry run python src/image_generate.py --config_path=config/config.yml
+    env PYTHONPATH=$(pwd) poetry run python src/model/image_generate.py --config_path=config/config.yml
     ```
 3. mlflow uiで、学習曲線や生成画像を確認する。   
    下記コマンドでサーバーを立ち上げられます。

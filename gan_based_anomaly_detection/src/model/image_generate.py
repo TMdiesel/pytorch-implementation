@@ -9,6 +9,8 @@ import logging
 import pathlib
 import tempfile
 import datetime
+import pytz
+import glob
 
 # third party package
 import matplotlib.pyplot as plt
@@ -28,6 +30,7 @@ import src.dataset.image_datamodule as image_datamodule
 import src.dataset.generate_pathlist as generate_pathlist
 import src.model.dcgan as dcgan
 import src.utils.utils as ut
+import src.utils.yaml_config as yc
 
 # global paramter 
 PROJECT_DIR=os.environ.get("PROJECT_DIR","..")
@@ -83,7 +86,8 @@ class GAN(pl.LightningModule):
         if optimizer_idx==0:
             g_loss=self.criterion(d_out_fake.view(-1),label_real)
 
-            self.logger.log_metrics({"train_gloss":g_loss.to("cpu").detach().numpy().item()},self.global_step)
+            self.logger.log_metrics({"train_gloss":g_loss.to("cpu").detach().numpy().item()},
+                                    self.global_step)
             return g_loss
         # discriminator
         if optimizer_idx==1:
@@ -92,7 +96,8 @@ class GAN(pl.LightningModule):
             d_loss_fake=self.criterion(d_out_fake.view(-1),label_fake)
             d_loss=d_loss_real+d_loss_fake
 
-            self.logger.log_metrics({"train_dloss":d_loss.to("cpu").detach().numpy().item()},self.global_step)
+            self.logger.log_metrics({"train_dloss":d_loss.to("cpu").detach().numpy().item()},
+                                    self.global_step)
             return d_loss
 
     def on_epoch_end(self):
@@ -107,7 +112,8 @@ class GAN(pl.LightningModule):
             filepath = pathlib.Path(dname).joinpath(f"{self.current_epoch}.png")
             fig.savefig(filepath)
             plt.close()
-            self.logger.experiment.log_artifact(local_path=filepath,run_id=self.logger.run_id) 
+            self.logger.experiment.log_artifact(local_path=filepath,
+                                                run_id=self.logger.run_id) 
 
     def validation_step(self,batch,batch_idx):
         pass
@@ -146,7 +152,6 @@ def main(config):
         )
 
     mlflow_tags={}
-    mlflow_tags["mlflow.runName"]=config.run_name
     mlflow_tags["mlflow.user"]=config.user
     mlflow_tags["mlflow.source.name"]=str(os.path.abspath(__file__)).replace("/",'\\')
     mlf_logger = MLFlowLogger(
@@ -155,9 +160,10 @@ def main(config):
         tags=mlflow_tags
         )
 
-    now=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    now=datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%Y-%m-%d-%H-%M-%S')
+    ckpt_path=f"{config.checkpoint_dir}{now}_{mlf_logger.run_id}"
     checkpoint_callback = ModelCheckpoint(
-        filepath=f"{config.checkpoint_dir}{now}_{mlf_logger.run_id}",
+        filepath=ckpt_path,
         save_top_k=None,
         monitor=None,
     )
@@ -171,15 +177,28 @@ def main(config):
         )
     trainer.fit(model, datamodule=dm)
 
-    # save to mlflow
+    # save log, model, and config to mlflow
     mlf_logger.experiment.log_artifact(mlf_logger.run_id,
                                 config.log_dir+"/"+config.log_normal)
     mlf_logger.experiment.log_artifact(mlf_logger.run_id,
                                 config.log_dir+"/"+config.log_error)
 
+    with tempfile.TemporaryDirectory() as dname:
+        for ckptfile in glob.glob(f"{ckpt_path}*"):
+            model=model.load_from_checkpoint(checkpoint_path=ckptfile)
+            with tempfile.TemporaryDirectory() as dname:
+                filepath = pathlib.Path(dname).joinpath(f"{pathlib.Path(ckptfile).stem}.pth")
+                torch.save(model.state_dict(),filepath)
+                mlf_logger.experiment.log_artifact(mlf_logger.run_id,filepath)
+
+    with tempfile.TemporaryDirectory() as dname:
+        filepath = pathlib.Path(dname).joinpath("config.yml")
+        config.save(filepath)
+        mlf_logger.experiment.log_artifact(mlf_logger.run_id,filepath)
+
 
 @dc.dataclass
-class Config:
+class Config(yc.YamlConfig):
     """設定値"""
     # GAN
     image_size:int=64
@@ -207,7 +226,6 @@ class Config:
     # mlflow
     experiment_name: str="experiment"
     tracking_uri: str="logs/mlruns"
-    run_name: str="test"
     user: str="vscode"
 
     # checkpoint

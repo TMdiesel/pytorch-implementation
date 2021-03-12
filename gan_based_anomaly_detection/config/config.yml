@@ -23,7 +23,6 @@ log_error: error.log
 # mlflow
 experiment_name: experiment
 tracking_uri: logs/mlruns
-run_name: test
 user: vscode
 
 # checkpoint
