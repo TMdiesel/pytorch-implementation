@@ -6,7 +6,9 @@ b1: 0
 b2: 0.9
 
 # trainer
-max_epochs: 200
+max_epochs: 100
+
+# seed
 seed: 1234
 
 # data
@@ -23,3 +25,6 @@ experiment_name: experiment
 tracking_uri: logs/mlruns
 run_name: test
 user: vscode
+
+# checkpoint
+checkpoint_dir: ./logs/lightning/
