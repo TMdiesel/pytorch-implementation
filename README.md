@@ -15,6 +15,8 @@ PyTorchに関連する実装です。
     - DCGANによる画像生成の実装
 - [gan_based_anomaly_detection][gan_based_anomaly_detection]
     - GANによる異常検知アルゴリズムの実装
+- [pytorch_mlflow_hydra_optuna][pytorch_mlflow_hydra_optuna]
+    - MLflow, Hydra, Optunaを利用した実験管理手順
 
 [pytorch_classification]:./pytorch_classification
 [pytorch_autoencoder]:./pytorch_autoencoder
@@ -22,6 +24,7 @@ PyTorchに関連する実装です。
 [deep_learning_with_pytorch]:./deep_learning_with_pytorch
 [gan]:./gan
 [gan_based_anomaly_detection]:./gan_based_anomaly_detection
+[pytorch_mlflow_hydra_optuna]:./pytorch_mlflow_hydra_optuna
 
 
 ## 実行環境

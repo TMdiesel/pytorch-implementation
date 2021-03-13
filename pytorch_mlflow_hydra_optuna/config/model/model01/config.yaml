@@ -1,0 +1,24 @@
+# trainer
+max_epochs: 1
+seed: 1234
+learning_rate: 0.001
+
+# data
+project_dir: /workspaces/load_to_goal/GitHub/pytorch-implementation/
+train_dir: pytorch_classification/_data/train_image
+train_label_path: pytorch_classification/_data/train_label/label.pkl
+test_dir: pytorch_classification/_data/test_image
+test_label_path: pytorch_classification/_data/test_label/label.pkl
+
+# logging
+log_dir: ./logs/logging_/model/model01
+log_normal: log.log
+log_error: error.log
+
+# mlflow
+experiment_name: experiment1
+tracking_uri: logs/mlruns
+user: vscode
+
+# checkpoint
+checkpoint_dir: ./logs/lightning
