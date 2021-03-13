@@ -16,7 +16,8 @@ import yaml
 import pytz
 import mlflow
 import mlflow.pytorch
-from omegaconf import OmegaConf
+import hydra
+from omegaconf import OmegaConf, DictConfig
 
 import torch 
 from torch.nn import functional as F
@@ -79,16 +80,27 @@ class LitClassifier(pl.LightningModule):
         return torch.optim.Adam(self.parameters(),lr=self.hparams.learning_rate)
 
 
-def main(config):
+@hydra.main(config_path="../../../config/model/model01", config_name="config")
+def main(config:DictConfig):
+    # logger
+    cwd=pathlib.Path(hydra.utils.get_original_cwd())
+    ut.init_root_logger(
+        cwd.joinpath(config.log_dir),
+        config.log_normal,
+        config.log_error,
+        )
+
+    # pytorch setting
     pl.seed_everything(config.seed)
     gpus = [0] if torch.cuda.is_available() else None
 
+    # data
     filepath_list_train,label_list_train=generate_pathlist.make_datapath_list(
-        config.project_dir+config.train_dir,
-        config.project_dir+config.train_label_path)
+        cwd.joinpath(config.train_dir),
+        cwd.joinpath(config.train_label_path))
     filepath_list_test,label_list_test=generate_pathlist.make_datapath_list(
-        config.project_dir+config.test_dir,
-        config.project_dir+config.test_label_path)
+        cwd.joinpath(config.test_dir),
+        cwd.joinpath(config.test_label_path))
     dm = image_datamodule.ImageDataModule(
         filepath_list_train=filepath_list_train,
         filepath_list_test=filepath_list_test,
@@ -96,23 +108,26 @@ def main(config):
         label_list_test=label_list_test,
         )
 
+    # model
     net=image_network.CNN()
     model = LitClassifier(
         model=net,
         learning_rate=config.learning_rate,
         )
 
+    # mlflow
     mlflow_tags={}
     mlflow_tags["mlflow.user"]=config.user
     mlflow_tags["mlflow.source.name"]=str(os.path.abspath(__file__)).replace("/",'\\')
     mlf_logger = MLFlowLogger(
         experiment_name=config.experiment_name,
-        tracking_uri=config.tracking_uri,
+        tracking_uri=str(cwd.joinpath(config.tracking_uri)),
         tags=mlflow_tags
         )
 
+    # train&inference
     now=datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%Y-%m-%d-%H-%M-%S')
-    ckpt_path=f"{config.checkpoint_dir}{now}_{mlf_logger.run_id}"
+    ckpt_path=str(cwd.joinpath(f"{config.checkpoint_dir}{now}_{mlf_logger.run_id}"))
     checkpoint_callback = ModelCheckpoint(
         filepath=ckpt_path,
         save_top_k=None,
@@ -132,9 +147,9 @@ def main(config):
 
     # save log, model, and config to mlflow
     mlf_logger.experiment.log_artifact(mlf_logger.run_id,
-                                config.log_dir+"/"+config.log_normal)
+                                cwd.joinpath(config.log_dir,config.log_normal))
     mlf_logger.experiment.log_artifact(mlf_logger.run_id,
-                                config.log_dir+"/"+config.log_error)
+                                cwd.joinpath(config.log_dir,config.log_error))
 
     with tempfile.TemporaryDirectory() as dname:
         for ckptfile in glob.glob(f"{ckpt_path}*"):
@@ -144,59 +159,12 @@ def main(config):
                 torch.save(model.state_dict(),filepath)
                 mlf_logger.experiment.log_artifact(mlf_logger.run_id,filepath)
 
-    with tempfile.TemporaryDirectory() as dname:
-        filepath = pathlib.Path(dname).joinpath("config.yaml")
-        conf = OmegaConf.create(dc.asdict(config))
-        conf_yaml=OmegaConf.to_yaml(conf)
-        with open(filepath,"w") as f:
-            f.write(conf_yaml)
-        mlf_logger.experiment.log_artifact(mlf_logger.run_id,filepath)
-
-
-@dc.dataclass
-class Config:
-    """設定値"""
-    # trainer
-    max_epochs:int=2
-    seed:int=1234
-    learning_rate:int=1e-3
-
-    # data
-    project_dir:str="path/to/project"
-    train_dir:str="path/to/train"
-    train_label_path:str="path/to/train"
-    test_dir:str="path/to/test"
-    test_label_path:str="path/to/test"
-
-    # logging
-    log_dir:str="./logs/logging_/model/model01"
-    log_normal:str="log.log"
-    log_error:str="error.log"
-
-    # mlflow
-    experiment_name: str="model01"
-    tracking_uri: str="logs/mlruns"
-    user: str="vscode"
-
-    # checkpoint
-    checkpoint_dir:str="./logs/lightning"
+    for yamlfile in glob.glob(".hydra/*.yaml"):
+        mlf_logger.experiment.log_artifact(mlf_logger.run_id,yamlfile)
 
 
 if __name__ == '__main__':
-    parser = ArgumentParser()
-    parser.add_argument('--config_path')
-    args=parser.parse_args()
-    with open(args.config_path) as f:
-        config=yaml.load(f,Loader=yaml.SafeLoader)
-    config=Config(**config)
-
-    ut.init_root_logger(
-        pathlib.Path(config.log_dir),
-        config.log_normal,
-        config.log_error,
-        )
-
-    main(config)
+    main()
 
 
 

@@ -9,7 +9,8 @@
 | `_data`|データセットや特徴量を格納します。
 |`config`|学習時の設定パラメータをyamlファイルで管理します。内部は`src`の構造と対応させます。
 | `diary`|分析日記をつけます。
-| `logs` | PytorchLightning, MLflow, その他(loggingなど)で出力されたログを格納します。
+| `logs` | PytorchLightning, MLflow, その他(loggingなど)で出力されたログを格納します。`mlruns`のartifactsにログ、設定ファイル、モデルなどをすべて保存しています。
+|`outputs`| Hydraの出力ディレクトリです。
 |`notebooks`|EDA用のjupyter notebookを格納します。
 |`scripts`|シェルスクリプトを格納します。
 |`src`|Pythonスクリプトファイルを格納します。<br> ファイルは`dataset`,`feature`,`model`,`utils`というサブディレクトリで整理します。<br> `utils`以外の下にはさらに実験ごとにサブディレクトリを作ります。(後方互換性を気にしないため。)|
@@ -25,17 +26,15 @@
 │   └── model
 ├── diary
 ├── logs
-│   ├── lightning_logs
-│   │   ├── version_0
-│   │   ├── ...
+│   ├── lightning
 │   ├── logging_
 │   │   ├── dataset
 │   │   ├── feature
 │   │   └── model
 │   └── mlruns
 ├── notebooks
-│   └── template.ipynb
 ├── scripts
+├── outputs
 └── src
     ├── dataset
     │   ├── dataset01
@@ -50,11 +49,6 @@
 
 ```
 
-## 実行環境
-poetryを用いてPythonパッケージを管理します。下記コマンドで必要なパッケージをインストールできます。
-```
-poetry install
-```
 
 ## 実験管理手順
 ### 用語
@@ -62,9 +56,10 @@ poetry install
 ### 手順
 1番目の実験における`model`の学習を例に取ります。手順は以下のとおりです。
 1. 実験ごとに`model/model1`の下にコードを置く。
-2. `config/model/model1`の下に学習パラメータ設定用の`config1.yaml`を置く。同一の実験下でパラメータを変えて複数のrunを行うときは、新たに`config2.yml`...を作る。
+2. `config/model/model1`の下に学習パラメータ設定用の`config.yaml`を置く。yamlファイル中のパスは作業ディレクトリからの相対パスで書く。
 3. `bash scripts/run_python.sh`でスクリプトを実行する。ここで、CONFIG_PATH, PYTHON_SCRIPTは必要に応じて書き換える。
 4. `bash scripts/mlflow_ui.sh`でMLflow UIを立ち上げ、実験結果をまとめて見る。
+5. 必要に応じて、`notebooks/load_model.ipynb`でexperiment_nameとrun_idを指定してモデルをロードし、後処理を行う。
 
 
 

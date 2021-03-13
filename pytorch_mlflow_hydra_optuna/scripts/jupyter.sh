@@ -1,2 +1,2 @@
 #!/bin/bash
-poetry run jupyter lab --NotebookApp.token=''
+jupyter lab --NotebookApp.token=''
