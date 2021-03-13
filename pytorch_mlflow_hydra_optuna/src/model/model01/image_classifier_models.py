@@ -16,6 +16,7 @@ import yaml
 import pytz
 import mlflow
 import mlflow.pytorch
+from omegaconf import OmegaConf
 
 import torch 
 from torch.nn import functional as F
@@ -143,10 +144,13 @@ def main(config):
                 torch.save(model.state_dict(),filepath)
                 mlf_logger.experiment.log_artifact(mlf_logger.run_id,filepath)
 
-    #with tempfile.TemporaryDirectory() as dname:
-    #    filepath = pathlib.Path(dname).joinpath("config.yaml")
-    #    config.save(filepath)
-    #    mlf_logger.experiment.log_artifact(mlf_logger.run_id,filepath)
+    with tempfile.TemporaryDirectory() as dname:
+        filepath = pathlib.Path(dname).joinpath("config.yaml")
+        conf = OmegaConf.create(dc.asdict(config))
+        conf_yaml=OmegaConf.to_yaml(conf)
+        with open(filepath,"w") as f:
+            f.write(conf_yaml)
+        mlf_logger.experiment.log_artifact(mlf_logger.run_id,filepath)
 
 
 @dc.dataclass
@@ -170,7 +174,7 @@ class Config:
     log_error:str="error.log"
 
     # mlflow
-    experiment_name: str="experiment"
+    experiment_name: str="model01"
     tracking_uri: str="logs/mlruns"
     user: str="vscode"
 

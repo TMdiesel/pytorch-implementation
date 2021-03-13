@@ -70,16 +70,20 @@ poetry install
 
 
 ## 参考
+- 実験管理
+  - [オレオレKaggle実験管理](https://zenn.dev/fkubota/articles/f7efe69fd2044d)
 - MLflow
    - [Python: MLflow Projects を使ってみる](https://blog.amedama.jp/entry/mlflow-projects)
    - [MLflow GitHub](https://github.com/mlflow/mlflow)
    - [MLflow Projects documentation](https://www.mlflow.org/docs/latest/projects.html)
    - [mlflowを使ってデータ分析サイクルの効率化する方法を考える](https://qiita.com/masa26hiro/items/574c48d523ed76e76a3b)
-   - [オレオレKaggle実験管理](https://zenn.dev/fkubota/articles/f7efe69fd2044d)
-   - [Pytorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.loggers.mlflow.html)
    - [MLflow tags](https://github.com/mlflow/mlflow/blob/9fd60eeee77dbda37bae0ff97bc899e2bf87605f/mlflow/utils/mlflow_tags.py#L7)
    - [MLFlowLogger source](https://pytorch-lightning.readthedocs.io/en/stable/_modules/pytorch_lightning/loggers/mlflow.html)
    - [MLflowのデータストアを覗いてみる](https://blog.hoxo-m.com/entry/mlflow_store)
    - [MLflow使い始めたのでメモ](https://zenn.dev/currypurin/articles/15bd449da18807b08f89)
 - Hydra
    - [Hydra公式ドキュメント](https://hydra.cc/docs/intro/)
+   - [Python: OmegaConf を使ってみる](https://blog.amedama.jp/entry/omega-conf)
+   - [ハイパラ管理のすすめ -ハイパーパラメータをHydra+MLflowで管理しよう-](https://ymym3412.hatenablog.com/entry/2020/02/09/034644)
+- Pytorch
+   - [Pytorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.loggers.mlflow.html)

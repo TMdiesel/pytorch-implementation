@@ -16,9 +16,9 @@ log_normal: log.log
 log_error: error.log
 
 # mlflow
-experiment_name: experiment1
+experiment_name: model01
 tracking_uri: logs/mlruns
 user: vscode
 
 # checkpoint
-checkpoint_dir: ./logs/lightning
+checkpoint_dir: ./logs/lightning/
