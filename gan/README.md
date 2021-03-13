@@ -16,9 +16,13 @@ PyTorch Lightningを利用したMNIST画像生成DCGANの実装です。
 
 ## 生成画像
 下記のような画像が生成されます。学習epoch数は100です。
-|  88th epoch  |  99th epoch  |
+|  88th epoch  |  100th epoch  |
 | :----: | :----: |
 |![](./imgs/87.png)|![](./imgs/99.png)|
+
+|gif|
+| :----: | 
+|![image](https://user-images.githubusercontent.com/50258785/111020209-8b33d700-8407-11eb-8eb6-4a96987593d4.gif)|
 
 ## 参考
 - GitHub: [YutaroOgawa/pytorch_advanced](https://github.com/YutaroOgawa/pytorch_advanced/tree/master/5_gan_generation)
