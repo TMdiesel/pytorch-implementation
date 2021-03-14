@@ -67,7 +67,9 @@ class LitClassifier(pl.LightningModule):
         accuracy=self.accuracy(y_hat,y)
         self.logger.log_metrics({"val_acc":accuracy.item()},self.global_step)
         self.logger.log_metrics({"val_loss":loss.item()},self.global_step)
-
+        self.log('val_loss',loss)
+        return loss
+    
     def test_step(self,batch,batch_idx):
         x,y=batch
         y_hat=self(x)
@@ -130,8 +132,12 @@ def main(config:DictConfig):
     ckpt_path=str(cwd.joinpath(f"{config.checkpoint_dir}{now}_{mlf_logger.run_id}"))
     checkpoint_callback = ModelCheckpoint(
         filepath=ckpt_path,
-        save_top_k=None,
-        monitor=None,
+        monitor="val_loss",
+        mode="auto",
+        verbose=False,
+        save_top_k=1,
+        save_last=False,
+        period=1,
     )
 
     trainer = pl.Trainer(
@@ -161,6 +167,8 @@ def main(config:DictConfig):
 
     for yamlfile in glob.glob(".hydra/*.yaml"):
         mlf_logger.experiment.log_artifact(mlf_logger.run_id,yamlfile)
+    
+    return checkpoint_callback.best_model_score
 
 
 if __name__ == '__main__':

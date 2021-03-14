@@ -177,4 +177,4 @@ memo.md
 
 # hydra
 pytorch_mlflow_hydra_optuna/outputs
-pytorch_mlflow_hydra_optuna/multiruns
+pytorch_mlflow_hydra_optuna/multirun

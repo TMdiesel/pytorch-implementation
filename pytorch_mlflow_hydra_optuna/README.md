@@ -55,11 +55,15 @@
 実験、runという単位は、[オレオレKaggle実験管理](https://zenn.dev/fkubota/articles/f7efe69fd2044d)と同様です。
 ### 手順
 1番目の実験における`model`の学習を例に取ります。手順は以下のとおりです。
-1. 実験ごとに`model/model1`の下にコードを置く。
-2. `config/model/model1`の下に学習パラメータ設定用の`config.yaml`を置く。yamlファイル中のパスは作業ディレクトリからの相対パスで書く。
-3. `bash scripts/run_python.sh`でスクリプトを実行する。ここで、CONFIG_PATH, PYTHON_SCRIPTは必要に応じて書き換える。
-4. `bash scripts/mlflow_ui.sh`でMLflow UIを立ち上げ、実験結果をまとめて見る。
-5. 必要に応じて、`notebooks/load_model.ipynb`でexperiment_nameとrun_idを指定してモデルをロードし、後処理を行う。
+1. 実験ごとに`model/model1`の下にコードを置きます。
+2. `config/model/model1`の下に学習パラメータ設定用の`config.yaml`を置きます。yamlファイル中のパスは作業ディレクトリからの相対パスで書きます。
+3. 下記コマンドでスクリプトを実行します。
+   Optunaで最適化したいパラメータをCLIで指定できます。
+    ```
+    env PYTHONPATH=$(pwd) poetry run python src/model/model01 image_classifier_models.py  -m 'learning_rate=interval(0.001,0.002)'                                                
+    ```
+4. `bash scripts/mlflow_ui.sh`でMLflow UIを立ち上げ、実験結果をまとめて見ることができます。
+5. 必要に応じて、`notebooks/load_model.ipynb`でexperiment_nameとrun_idを指定してモデルをロードし、後処理を行います。
 
 
 
@@ -82,3 +86,7 @@
    - [ハイパラ管理のすすめ -ハイパーパラメータをHydra+MLflowで管理しよう-](https://ymym3412.hatenablog.com/entry/2020/02/09/034644)
 - Pytorch
    - [Pytorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.loggers.mlflow.html)
+   - [Pytorch ModelCheckpoint](https://pytorch-lightning.readthedocs.io/en/1.0.2/_modules/pytorch_lightning/callbacks/model_checkpoint.html)
+- Optuna
+    - [supikiti/hydra-mlflow-optuna-sample](https://github.com/supikiti/hydra-mlflow-optuna-sample)
+    - [Optuna Sweeper plugin](https://hydra.cc/docs/next/plugins/optuna_sweeper)
