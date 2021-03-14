@@ -11,6 +11,7 @@
 | `diary`|分析日記をつけます。
 | `logs` | PytorchLightning, MLflow, その他(loggingなど)で出力されたログを格納します。`mlruns`のartifactsにログ、設定ファイル、モデルなどをすべて保存しています。
 |`outputs`| Hydraの出力ディレクトリです。
+|`multirun`| Hydraの出力ディレクトリです。
 |`notebooks`|EDA用のjupyter notebookを格納します。
 |`scripts`|シェルスクリプトを格納します。
 |`src`|Pythonスクリプトファイルを格納します。<br> ファイルは`dataset`,`feature`,`model`,`utils`というサブディレクトリで整理します。<br> `utils`以外の下にはさらに実験ごとにサブディレクトリを作ります。(後方互換性を気にしないため。)|
