@@ -178,3 +178,5 @@ memo.md
 # hydra
 pytorch_mlflow_hydra_optuna/outputs
 pytorch_mlflow_hydra_optuna/multirun
+time_series_forecasting/outputs
+time_series_forecasting/multirun

@@ -1,0 +1,39 @@
+defaults:
+  - hydra/sweeper: optuna
+
+hydra:
+  sweeper:
+    optuna_config:
+      direction: minimize
+      study_name: sphere
+      storage: null
+      n_trials: 5
+      n_jobs: 1
+      sampler: tpe
+      seed: 123
+
+# classifier
+learning_rate: 0.001
+
+# trainer
+max_epochs: 2
+seed: 1234
+
+# data
+train_dir: ../pytorch_classification/_data/train_image
+train_label_path: ../pytorch_classification/_data/train_label/label.pkl
+test_dir: ../pytorch_classification/_data/test_image
+test_label_path: ../pytorch_classification/_data/test_label/label.pkl
+
+# logging
+log_dir: ./logs/logging_/model/model01
+log_normal: log.log
+log_error: error.log
+
+# mlflow
+experiment_name: model01
+tracking_uri: logs/mlruns
+user: vscode
+
+# checkpoint
+checkpoint_dir: ./logs/lightning/
