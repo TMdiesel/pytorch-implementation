@@ -8,25 +8,25 @@ import pathlib
 
 # third party package
 import numpy as np
+import pandas as pd
 from torch.utils.data import DataLoader, random_split
 import pytorch_lightning as pl
 
 # my package
-import src.dataset.dataset01.image_dataset as image_dataset
+import src.dataset.time_dataset as time_dataset
 
 
-class ImageDataModule(pl.LightningDataModule):
+class TimeDataModule(pl.LightningDataModule):
     def __init__(
         self,
-        val_split:int=1000,
+        input_length:int,
+        label_length:int,
+        val_ratio:float=0.2,
         num_workers:int=4,
         seed:int=1234,
-        batch_size:int=32,
-        filepath_list_train:t.List[pathlib.Path]=None,
-        filepath_list_test:t.List[pathlib.Path]=None,
-        label_list_train:np.array=None,
-        label_list_test:np.array=None,
-        class_num:int=10,
+        batch_size:int=16,
+        df_train:pd.DataFrame=None,
+        df_test:pd.DataFrame=None,
         *args,
         **kwargs,
         ):
@@ -35,35 +35,35 @@ class ImageDataModule(pl.LightningDataModule):
         if platform.system()=="Windows":
             num_workers=0
 
-        self.dims=(1,28,28)
-        self.val_split = val_split
+        self.input_length=input_length
+        self.label_length=label_length
         self.num_workers = num_workers
         self.seed = seed
         self.batch_size = batch_size
-        self.filepath_list_train=filepath_list_train
-        self.filepath_list_test =filepath_list_test
-        self.label_list_train   =label_list_train
-        self.label_list_test    =label_list_test
-        self.class_num=class_num
-        self.dataset_train = ...
-        self.dataset_val = ...
+        self.df_test=df_test
+
+        val_length=int(len(df_train)*val_ratio)
+        self.df_train=df_train.iloc[:-val_length]
+        self.df_val=df_train.iloc[-val_length:]
 
     def setup(self,stage:t.Optional[str]):
         """split the train and valid dataset"""
-        dataset=image_dataset.ImageDataset(self.filepath_list_train,
-                                           self.label_list_train,
-                                           self.class_num,
-                                           image_dataset.BaseTransform())
-        train_length=len(dataset)
-        self.dataset_train,self.dataset_val=random_split(
-            dataset,[train_length-self.val_split,self.val_split]
-        )
+        self.dataset_train=time_dataset.TimeDataset(
+            self.df_train,
+            self.input_length,
+            self.label_length,
+            )
+        self.dataset_val=time_dataset.TimeDataset(
+            self.df_val,
+            self.input_length,
+            self.label_length,
+            )
 
     def train_dataloader(self):
         loader=DataLoader(
             self.dataset_train,
             batch_size=self.batch_size,
-            shuffle=True,
+            shuffle=False,
             num_workers=self.num_workers,
             drop_last=True,
             pin_memory=True,
@@ -82,10 +82,11 @@ class ImageDataModule(pl.LightningDataModule):
         return loader
 
     def test_dataloader(self):
-        dataset=image_dataset.ImageDataset(self.filepath_list_test,
-                                           self.label_list_test,
-                                           self.class_num,
-                                           image_dataset.BaseTransform())
+        dataset=time_dataset.TimeDataset(
+            self.df_test,
+            self.input_length,
+            self.label_length,
+            )
         loader=DataLoader(
             dataset,
             batch_size=self.batch_size,

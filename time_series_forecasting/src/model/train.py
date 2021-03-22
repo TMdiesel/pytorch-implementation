@@ -18,71 +18,61 @@ import mlflow
 import mlflow.pytorch
 import hydra
 from omegaconf import OmegaConf, DictConfig
+import pandas as pd
 
 import torch 
+import torch.nn as nn
 from torch.nn import functional as F
 import pytorch_lightning as pl
-from torch.utils.tensorboard import SummaryWriter
 from pytorch_lightning.loggers import MLFlowLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 # my package
-import src.dataset.dataset01.image_datamodule as image_datamodule
-import src.dataset.dataset01.generate_pathlist as generate_pathlist
-import src.model.model01.image_network as image_network
+import src.dataset.time_datamodule as time_datamodule
+import src.model.network as network
 import src.utils.utils as ut
-
-# global paramter 
-PROJECT_DIR=os.environ.get("PROJECT_DIR","..")
 
 # logger
 logger=logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class LitClassifier(pl.LightningModule):
+class TimeSeriesForecast(pl.LightningModule):
     def __init__(self,model=None,learning_rate=1e-3,**kwargs):
         super().__init__()
         self.save_hyperparameters()
-
         self.model=model
-        self.accuracy = pl.metrics.Accuracy()
+        self.criterion = nn.MSELoss()
 
     def forward(self,x):
         return self.model(x)
 
     def training_step(self,batch,batch_idx):
         x,y=batch
-        y_hat=self(x)
-        loss=F.cross_entropy(y_hat,y)
-        accuracy=self.accuracy(y_hat,y)
-        self.logger.log_metrics({"train_acc":accuracy.item()},self.global_step)
+        y_hat=self(x).view(y.shape)
+        loss=self.criterion(y_hat,y)
         self.logger.log_metrics({"train_loss":loss.item()},self.global_step)
         return loss
 
     def validation_step(self,batch,batch_idx):
         x,y=batch
-        y_hat=self(x)
-        loss=F.cross_entropy(y_hat,y)
-        accuracy=self.accuracy(y_hat,y)
-        self.logger.log_metrics({"val_acc":accuracy.item()},self.global_step)
+        y_hat=self(x).view(y.shape)
+        loss=self.criterion(y_hat,y)
         self.logger.log_metrics({"val_loss":loss.item()},self.global_step)
         self.log('val_loss',loss)
         return loss
     
     def test_step(self,batch,batch_idx):
         x,y=batch
-        y_hat=self(x)
-        loss=F.cross_entropy(y_hat,y)
-        accuracy=self.accuracy(y_hat,y)
+        y_hat=self(x).view(y.shape)
+        loss=self.criterion(y_hat,y)
         self.log('test_loss',loss)
-        self.log('test_acc', accuracy)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(),lr=self.hparams.learning_rate)
 
 
-@hydra.main(config_path="../../../config/model/model01", config_name="config")
+@hydra.main(config_path="../../../config/model", config_name="config")
 def main(config:DictConfig):
     # logger
     cwd=pathlib.Path(hydra.utils.get_original_cwd())
@@ -97,22 +87,16 @@ def main(config:DictConfig):
     gpus = [0] if torch.cuda.is_available() else None
 
     # data
-    filepath_list_train,label_list_train=generate_pathlist.make_datapath_list(
-        cwd.joinpath(config.train_dir),
-        cwd.joinpath(config.train_label_path))
-    filepath_list_test,label_list_test=generate_pathlist.make_datapath_list(
-        cwd.joinpath(config.test_dir),
-        cwd.joinpath(config.test_label_path))
-    dm = image_datamodule.ImageDataModule(
-        filepath_list_train=filepath_list_train,
-        filepath_list_test=filepath_list_test,
-        label_list_train=label_list_train,
-        label_list_test=label_list_test,
+    df_train=pd.read_csv(cwd.joinpath(config.data_path)).iloc[:,1:]
+    dm = time_datamodule.ImageDataModule(
+        input_length=config.input_length,
+        label_length=config.label_length,
+        df_train=df_train,
         )
 
     # model
-    net=image_network.CNN()
-    model = LitClassifier(
+    net=network.CNN()
+    model = TimeSeriesForecast(
         model=net,
         learning_rate=config.learning_rate,
         )
@@ -148,8 +132,6 @@ def main(config:DictConfig):
         resume_from_checkpoint=None,
         )
     trainer.fit(model, datamodule=dm)
-    result = trainer.test(model, datamodule=dm)
-    pprint(result)
 
     # save log, model, and config to mlflow
     mlf_logger.experiment.log_artifact(mlf_logger.run_id,

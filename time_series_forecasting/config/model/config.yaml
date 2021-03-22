@@ -1,17 +1,3 @@
-defaults:
-  - hydra/sweeper: optuna
-
-hydra:
-  sweeper:
-    optuna_config:
-      direction: minimize
-      study_name: sphere
-      storage: null
-      n_trials: 5
-      n_jobs: 1
-      sampler: tpe
-      seed: 123
-
 # classifier
 learning_rate: 0.001
 
@@ -20,13 +6,12 @@ max_epochs: 2
 seed: 1234
 
 # data
-train_dir: ../pytorch_classification/_data/train_image
-train_label_path: ../pytorch_classification/_data/train_label/label.pkl
-test_dir: ../pytorch_classification/_data/test_image
-test_label_path: ../pytorch_classification/_data/test_label/label.pkl
+data_path: ./_data/data/jena_climate_2009_2016.csv
+input_length: 12
+label_length: 12
 
 # logging
-log_dir: ./logs/logging_/model/model01
+log_dir: ./logs/logging_/model
 log_normal: log.log
 log_error: error.log
 

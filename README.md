@@ -17,7 +17,7 @@ PyTorchに関連する実装です。
     - GANによる異常検知アルゴリズムの実装
 - [pytorch_mlflow_hydra_optuna][pytorch_mlflow_hydra_optuna]
     - MLflow, Hydra, Optunaを利用した実験管理手順
-- [time_series_forecasting][time_series_forecasting]
+- [time_series_forecasting][time_series_forecasting](under construction)
     - 時系列予測の実装
 
 [pytorch_classification]:./pytorch_classification
