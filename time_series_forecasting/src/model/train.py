@@ -72,7 +72,7 @@ class TimeSeriesForecast(pl.LightningModule):
         return torch.optim.Adam(self.parameters(),lr=self.hparams.learning_rate)
 
 
-@hydra.main(config_path="../../../config/model", config_name="config")
+@hydra.main(config_path="../../config/model", config_name="config")
 def main(config:DictConfig):
     # logger
     cwd=pathlib.Path(hydra.utils.get_original_cwd())
@@ -88,14 +88,19 @@ def main(config:DictConfig):
 
     # data
     df_train=pd.read_csv(cwd.joinpath(config.data_path)).iloc[:,1:]
-    dm = time_datamodule.ImageDataModule(
+    df_train=df_train[5::6]
+    dm = time_datamodule.TimeDataModule(
         input_length=config.input_length,
         label_length=config.label_length,
         df_train=df_train,
         )
 
     # model
-    net=network.CNN()
+    net=network.LSTM(
+        input_size=df_train.shape[1],
+        hidden_size=config.hidden_size,
+        output_size=df_train.shape[1]*config.label_length,
+    )
     model = TimeSeriesForecast(
         model=net,
         learning_rate=config.learning_rate,

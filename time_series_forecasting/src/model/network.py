@@ -4,14 +4,20 @@ import pytorch_lightning as pl
 from torch.nn import functional as F
 
 
-class FC(torch.nn.Module):
-    def __init__(self,hidden_dim=128):
+class LSTM(torch.nn.Module):
+
+    def __init__(self,input_size,hidden_size,output_size):
         super().__init__()
-        self.l1=torch.nn.Linear(28*28,hidden_dim)
-        self.l2=torch.nn.Linear(hidden_dim,10)
+        self.lstm1=torch.nn.LSTM(
+            input_size=input_size,
+            hidden_size=hidden_size,
+            batch_first=True,
+        )
+        self.fc1=torch.nn.Linear(hidden_size,output_size)
 
     def forward(self,x):
-        x=x.view(x.size(0),-1)
-        x=torch.relu(self.l1(x))
-        x=torch.relu(self.l2(x))
-        return x
+        _,(hn,_)=self.lstm1(x)
+        y=F.relu(hn.view(x.shape[0],-1))
+        y=self.fc1(y)
+        return y
+

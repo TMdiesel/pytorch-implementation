@@ -7,8 +7,11 @@ seed: 1234
 
 # data
 data_path: ./_data/data/jena_climate_2009_2016.csv
-input_length: 12
-label_length: 12
+input_length: 24
+label_length: 24
+
+# network
+hidden_size: 30
 
 # logging
 log_dir: ./logs/logging_/model

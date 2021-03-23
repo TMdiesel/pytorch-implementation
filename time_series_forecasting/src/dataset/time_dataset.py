@@ -39,4 +39,4 @@ class TimeDataset(data.Dataset):
         input_end=index+self.input_length
         input=array[index:input_end]
         label=array[input_end+1:input_end+1+self.label_length]
-        return input,label
+        return input.float(),label.float()
