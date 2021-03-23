@@ -18,16 +18,16 @@ class TimeDataset(data.Dataset):
 
     def __init__(
         self,
-        df:pd.DataFrame,
+        arr:np.array,
         input_length:int,
         label_length:int,
     ):
-        self.df=df
+        self.arr=arr
         self.input_length=input_length
         self.label_length=label_length
 
     def __len__(self):
-        length=self.df.shape[0]-self.input_length-self.label_length+1
+        length=self.arr.shape[0]-self.input_length-self.label_length+1
         return length
 
     def __getitem__(self, index):
@@ -35,7 +35,7 @@ class TimeDataset(data.Dataset):
         - torch tensor化
         - return input and label
         """
-        array=torch.tensor(self.df.values)
+        array=torch.tensor(self.arr)
         input_end=index+self.input_length
         input=array[index:input_end]
         label=array[input_end+1:input_end+1+self.label_length]

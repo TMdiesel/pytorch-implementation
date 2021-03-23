@@ -19,6 +19,7 @@ import mlflow.pytorch
 import hydra
 from omegaconf import OmegaConf, DictConfig
 import pandas as pd
+import sklearn.preprocessing as preprocessing
 
 import torch 
 import torch.nn as nn
@@ -86,13 +87,22 @@ def main(config:DictConfig):
     pl.seed_everything(config.seed)
     gpus = [0] if torch.cuda.is_available() else None
 
-    # data
+    # read, split and normalize data
     df_train=pd.read_csv(cwd.joinpath(config.data_path)).iloc[:,1:]
     df_train=df_train[5::6]
+    val_length=int(len(df_train)*config.val_ratio)
+    array_val=df_train.iloc[-val_length:].values
+    array_train=df_train.iloc[:-val_length].values
+
+    scaler = preprocessing.StandardScaler().fit(array_train)
+    array_train = scaler.transform(array_train)
+    array_val = scaler.transform(array_val)
+
     dm = time_datamodule.TimeDataModule(
         input_length=config.input_length,
         label_length=config.label_length,
-        df_train=df_train,
+        array_train=array_train,
+        array_val  =array_val,
         )
 
     # model

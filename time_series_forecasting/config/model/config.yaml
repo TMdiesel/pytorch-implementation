@@ -9,6 +9,7 @@ seed: 1234
 data_path: ./_data/data/jena_climate_2009_2016.csv
 input_length: 24
 label_length: 24
+val_ratio: 0.2
 
 # network
 hidden_size: 30

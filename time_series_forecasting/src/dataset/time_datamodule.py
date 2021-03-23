@@ -21,12 +21,12 @@ class TimeDataModule(pl.LightningDataModule):
         self,
         input_length:int,
         label_length:int,
-        val_ratio:float=0.2,
         num_workers:int=4,
         seed:int=1234,
         batch_size:int=16,
-        df_train:pd.DataFrame=None,
-        df_test:pd.DataFrame=None,
+        array_train:np.array=None,
+        array_val  :np.array=None,
+        array_test :np.array=None,
         *args,
         **kwargs,
         ):
@@ -40,21 +40,19 @@ class TimeDataModule(pl.LightningDataModule):
         self.num_workers = num_workers
         self.seed = seed
         self.batch_size = batch_size
-        self.df_test=df_test
-
-        val_length=int(len(df_train)*val_ratio)
-        self.df_train=df_train.iloc[:-val_length]
-        self.df_val=df_train.iloc[-val_length:]
+        self.array_test=array_test
+        self.array_train=array_train
+        self.array_val=array_val
 
     def setup(self,stage:t.Optional[str]):
         """split the train and valid dataset"""
         self.dataset_train=time_dataset.TimeDataset(
-            self.df_train,
+            self.array_train,
             self.input_length,
             self.label_length,
             )
         self.dataset_val=time_dataset.TimeDataset(
-            self.df_val,
+            self.array_val,
             self.input_length,
             self.label_length,
             )
@@ -83,7 +81,7 @@ class TimeDataModule(pl.LightningDataModule):
 
     def test_dataloader(self):
         dataset=time_dataset.TimeDataset(
-            self.df_test,
+            self.array_test,
             self.input_length,
             self.label_length,
             )
