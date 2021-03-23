@@ -107,9 +107,9 @@ def main(config:DictConfig):
 
     # model
     net=network.LSTM(
-        input_size=df_train.shape[1],
+        input_size=array_train.shape[1],
         hidden_size=config.hidden_size,
-        output_size=df_train.shape[1]*config.label_length,
+        output_size=array_train.shape[1]*config.label_length,
     )
     model = TimeSeriesForecast(
         model=net,
