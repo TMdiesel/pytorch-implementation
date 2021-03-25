@@ -161,6 +161,7 @@ cache*
 subset0/
 gan/data/
 gan_based_anomaly_detection/data/
+*onnx
 
 # for check
 check.sh

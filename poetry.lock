@@ -562,6 +562,19 @@ requests-oauthlib = ">=0.7.0"
 tool = ["click"]
 
 [[package]]
+name = "graphviz"
+version = "0.16"
+description = "Simple Python interface for Graphviz"
+category = "main"
+optional = false
+python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*"
+
+[package.extras]
+dev = ["tox (>=3)", "flake8", "pep8-naming", "wheel", "twine"]
+docs = ["sphinx (>=1.8)", "sphinx-rtd-theme"]
+test = ["mock (>=3)", "pytest (>=4)", "pytest-mock (>=2)", "pytest-cov"]
+
+[[package]]
 name = "grpcio"
 version = "1.35.0"
 description = "HTTP/2-based RPC framework"
@@ -588,6 +601,14 @@ eventlet = ["eventlet (>=0.9.7)"]
 gevent = ["gevent (>=0.13)"]
 setproctitle = ["setproctitle"]
 tornado = ["tornado (>=0.2)"]
+
+[[package]]
+name = "hiddenlayer"
+version = "0.3"
+description = "Neural network graphs and training metrics for PyTorch and TensorFlow"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "hydra-core"
@@ -2125,6 +2146,18 @@ torch = "1.7.1"
 scipy = ["scipy"]
 
 [[package]]
+name = "torchviz"
+version = "0.0.1"
+description = "A small package to create visualizations of PyTorch execution graphs"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+graphviz = "*"
+torch = "*"
+
+[[package]]
 name = "tornado"
 version = "6.1"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
@@ -2300,7 +2333,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "449da8eb8ea8e27110486aa067ba7635c1853a0dcaba9512356f32087435eaaa"
+content-hash = "3ad0e842c0914a82bf0aa62e2dadb0e19688ce7673c7f46244dc01f343e5e5d5"
 
 [metadata.files]
 absl-py = [
@@ -2597,6 +2630,10 @@ google-auth-oauthlib = [
     {file = "google-auth-oauthlib-0.4.2.tar.gz", hash = "sha256:65b65bc39ad8cab15039b35e5898455d3d66296d0584d96fe0e79d67d04c51d9"},
     {file = "google_auth_oauthlib-0.4.2-py2.py3-none-any.whl", hash = "sha256:d4d98c831ea21d574699978827490a41b94f05d565c617fe1b420e88f1fc8d8d"},
 ]
+graphviz = [
+    {file = "graphviz-0.16-py2.py3-none-any.whl", hash = "sha256:3cad5517c961090dfc679df6402a57de62d97703e2880a1a46147bb0dc1639eb"},
+    {file = "graphviz-0.16.zip", hash = "sha256:d2d25af1c199cad567ce4806f0449cb74eb30cf451fd7597251e1da099ac6e57"},
+]
 grpcio = [
     {file = "grpcio-1.35.0-cp27-cp27m-macosx_10_10_x86_64.whl", hash = "sha256:95cc4d2067deced18dc807442cf8062a93389a86abf8d40741120054389d3f29"},
     {file = "grpcio-1.35.0-cp27-cp27m-manylinux2010_i686.whl", hash = "sha256:d186a0ce291f4386e28a7042ec31c85250b0c2e25d2794b87fa3c15ff473c46c"},
@@ -2648,6 +2685,10 @@ grpcio = [
 gunicorn = [
     {file = "gunicorn-20.0.4-py2.py3-none-any.whl", hash = "sha256:cd4a810dd51bf497552cf3f863b575dabd73d6ad6a91075b65936b151cbf4f9c"},
     {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
+]
+hiddenlayer = [
+    {file = "hiddenlayer-0.3-py3-none-any.whl", hash = "sha256:ba5f52d773805bac3d1fb1cdbb07e8bf2126622bb4ec5add2d63670991313237"},
+    {file = "hiddenlayer-0.3.tar.gz", hash = "sha256:9197388f5512bb1a7c3ad61d7bd93c32f7bac6cbb86fb794ed3a3950282af862"},
 ]
 hydra-core = [
     {file = "hydra-core-1.0.6.tar.gz", hash = "sha256:be5fe119eb41ada20c82835b153b956781de7e2506670ba942f7453b2e850950"},
@@ -3583,6 +3624,9 @@ torchvision = [
     {file = "torchvision-0.8.2-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:cd8817e9197fc60ebae37162a445db90bbf35591314a5767ad3d1490b5d65b0f"},
     {file = "torchvision-0.8.2-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:1bd58acc3366ec02266aae56a7a752d43ef07de4a6ba420c4f907d0c9168bb8c"},
     {file = "torchvision-0.8.2-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:976750a49db2e23dc5a1ed0b5c31f7af51ed2702eee410ee09ef985c3a3e48cf"},
+]
+torchviz = [
+    {file = "torchviz-0.0.1.tar.gz", hash = "sha256:6f5981d065e15e6c570e1177a31ab74fa38b71ba875feae262a0c6cd2e9a6667"},
 ]
 tornado = [
     {file = "tornado-6.1-cp35-cp35m-macosx_10_9_x86_64.whl", hash = "sha256:d371e811d6b156d82aa5f9a4e08b58debf97c302a35714f6f45e35139c332e32"},

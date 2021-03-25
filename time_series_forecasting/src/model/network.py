@@ -16,7 +16,7 @@ class LSTM(torch.nn.Module):
         self.fc1=torch.nn.Linear(hidden_size,output_size)
 
     def forward(self,x):
-        _,(hn,_)=self.lstm1(x)
+        _,(hn,_df)=self.lstm1(x)
         y=F.relu(hn.view(x.shape[0],-1))
         y=self.fc1(y)
         return y
